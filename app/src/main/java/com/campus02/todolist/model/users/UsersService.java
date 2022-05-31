@@ -10,9 +10,9 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface UsersService {
+    @POST("/users")
+    Call<User> registerUser(@Body User user);
+
     @POST("/users/login")
     Call<User> loginUser(@Body User user);
-
-    @PUT("/users/register")
-    Call<User> registerUser(@Body User user);
 }

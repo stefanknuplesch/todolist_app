@@ -13,7 +13,7 @@ public class RetrofitUsersServiceBuilder {
         // backend server and the simulator run on the same machine.
         // See: https://developer.android.com/studio/run/emulator-networking
         usersService = new Retrofit.Builder()
-                .baseUrl("http://localhost:9000")
+                .baseUrl("http://10.0.2.2:9000")
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .build()
                 .create(UsersService.class);
