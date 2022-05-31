@@ -17,7 +17,6 @@ import com.campus02.todolist.model.tasks.Task;
 import com.campus02.todolist.model.tasks.TasksService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
   TextInputEditText txtDescription;
   MaterialCheckBox cbIsCompleted;
   MaterialButton btnSave;
-  MaterialButton btnCancel;
+  MaterialButton btnDelete;
   RadioGroup rgIsPublic;
 
   Task task;
@@ -188,22 +187,32 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
     cbIsCompleted = findViewById(R.id.cbIsCompleted);
     rgIsPublic = findViewById(R.id.rgIsPublic);
     btnSave = findViewById(R.id.btnSaveTask);
-    btnCancel = findViewById(R.id.btnDeleteTask);
+    btnDelete = findViewById(R.id.btnDeleteTask);
   }
 
   private void enableForm() { enableOrDisableForm(true); }
   private void disableForm() { enableOrDisableForm(false); }
 
   private void enableOrDisableForm(boolean enable) {
-    btnSave.setEnabled(enable);
     enableOrDisableEditText(txtTitle, enable);
     enableOrDisableEditText(txtDescription, enable);
+    cbIsCompleted.setEnabled(enable);
+    btnSave.setEnabled(enable);
+    btnDelete.setEnabled(enable);
+    enableOrDisableRadioGroup(rgIsPublic, enable);
   }
 
   private static void enableOrDisableEditText(EditText editText, boolean enable) {
-    editText.setInputType(enable ? InputType.TYPE_CLASS_TEXT : InputType.TYPE_NULL);
     editText.setFocusable(enable);
     editText.setFocusableInTouchMode(enable);
+  }
+
+  private static void enableOrDisableRadioGroup(RadioGroup radioGroup, boolean enable) {
+    radioGroup.setFocusable(enable);
+    radioGroup.setFocusableInTouchMode(enable);
+    for(int i = 0; i < radioGroup.getChildCount(); i++) {
+      radioGroup.getChildAt(i).setEnabled(enable);
+    }
   }
 
   private void populateFormFromTask(Task task) {
