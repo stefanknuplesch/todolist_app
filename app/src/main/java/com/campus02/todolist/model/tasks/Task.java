@@ -1,6 +1,6 @@
 package com.campus02.todolist.model.tasks;
 
-public class Task {
+public class Task implements Comparable<Task> {
 
   private Integer id;
   private String title;
@@ -75,5 +75,16 @@ public class Task {
             ", lastModifiedUserId=" + lastModifiedUserId +
             ", lastModifiedTimestamp=" + lastModifiedTimestamp +
             '}';
+  }
+
+  @Override
+  public int compareTo(Task other) {
+    boolean b1 = this.isCompleted();
+    boolean b2 = other.isCompleted();
+
+    if (b1 == b2)
+      return other.getId().compareTo(this.getId());
+    else
+      return b1 ? 1 : -1;
   }
 }

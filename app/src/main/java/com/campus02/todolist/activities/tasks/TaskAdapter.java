@@ -33,7 +33,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
   public void onBindViewHolder(TaskHolder holder, int position) {
     Task task = tasks.get(position);
     holder.task.setText(task.getTitle());
-    holder.completed.setTag(task.getId());
+    holder.completed.setChecked(task.isCompleted());
     holder.itemView.setTag(task.getId());
     holder.itemView.setOnClickListener(itemView -> {
       int taskId = (int)itemView.getTag();
