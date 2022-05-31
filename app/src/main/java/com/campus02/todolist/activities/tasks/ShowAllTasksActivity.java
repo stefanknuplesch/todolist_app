@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.campus02.todolist.R;
+import com.campus02.todolist.model.Result;
 import com.campus02.todolist.model.tasks.RetrofitTasksServiceBuilder;
 import com.campus02.todolist.model.tasks.Task;
 import com.campus02.todolist.model.tasks.TasksService;
@@ -64,11 +65,35 @@ public class ShowAllTasksActivity extends AppCompatActivity {
             }
 
             private void createAndSetTaskAdapter(List<Task> tasks) {
-                Collections.sort(tasks);
-                TaskAdapter taskAdapter = new TaskAdapter(tasks);
-                taskAdapter.setCallback(Task::setIsCompleted);
+                TaskAdapter taskAdapter = getNewSortedAdapter(tasks);
+                taskAdapter.setCallback((task, isChecked) -> {
+                    task.setIsCompleted(isChecked);
+                    tasksService
+                            .updateTaskStatus(task.getId(), task.isCompleted(), TEMP_USER_ID)
+                            .enqueue(new Callback<Task>() {
+                                @Override
+                                public void onResponse(Call<Task> call, Response<Task> response) {
+                                    android.util.Log.d("ShowAllTasks", response.raw().toString());
+                                    Result<Task> result = new Result<>(response);
+                                    if (result.isSuccessful()) {
+                                        Toast.makeText(ShowAllTasksActivity.this, "Aufgabe wurde erfolgreich aktualisiert.", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        Toast.makeText(ShowAllTasksActivity.this, "Fehler beim Aktualisieren der Aufgabe.", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                @Override
+                                public void onFailure(Call<Task> call, Throwable t) {
+                                    Toast.makeText(ShowAllTasksActivity.this, "Fehler beim Aktualisieren der Aufgabe.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                });
                 rvTasks.setAdapter(taskAdapter);
             }
         });
+    }
+    private TaskAdapter getNewSortedAdapter(List<Task> tasks) {
+        Collections.sort(tasks);
+        return new TaskAdapter(tasks);
     }
 }

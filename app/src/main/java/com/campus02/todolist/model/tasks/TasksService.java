@@ -25,6 +25,9 @@ public interface TasksService {
     @PUT("/tasks/{id}")
     Call<Task> updateTask(@Path("id") Integer taskId, @Header("userId") Integer userId, @Body Task task);
 
+    @PUT("/tasks/{id}/status")
+    Call<Task> updateTaskStatus(@Path("id") Integer taskId, @Header("completed") Boolean isCompleted, @Header("userId") Integer userId);
+
     @DELETE("/tasks/{id}")
     Call<Task> deleteTask(@Path("id") Integer taskId, @Header("userId") Integer userId);
 
