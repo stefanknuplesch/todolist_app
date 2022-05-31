@@ -31,8 +31,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
   @Override
   public void onBindViewHolder(TaskHolder holder, int position) {
     Task task = tasks.get(position);
-    holder.title.setText(task.getTitle());
-   //holder.phoneNumber.setText(contact.getPhoneNumber());
+    holder.task.setText(task.getTitle());
 
     holder.itemView.setTag(task.getId());
 

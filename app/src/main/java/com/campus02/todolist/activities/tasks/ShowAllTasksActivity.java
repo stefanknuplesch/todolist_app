@@ -34,7 +34,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     rvTasks = findViewById(R.id.rvTasks);
     rvTasks.setLayoutManager(new LinearLayoutManager(this));
 
-    FloatingActionButton fabAddNewContact = findViewById(R.id.fabAddNewContact);
+    FloatingActionButton fabAddNewContact = findViewById(R.id.fabAddNewTask);
     fabAddNewContact.setOnClickListener(view -> {
       Intent intent = new Intent(this, AddOrEditTaskActivity.class);
       startActivity(intent);
