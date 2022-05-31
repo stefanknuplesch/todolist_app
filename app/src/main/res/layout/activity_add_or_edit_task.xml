@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:padding="25dp"
+  tools:context=".activities.tasks.AddOrEditTaskActivity">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:gravity="bottom|left"
+        android:hint="@string/title" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/txtDescription"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:hint="@string/description"
+        android:lines="4"
+        android:gravity="bottom"
+        android:singleLine="false" />
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbIsCompleted"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/isCompleted"/>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbIsPublic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="@string/isPublic"/>
+
+  </LinearLayout>
+
+  <com.google.android.material.button.MaterialButton
+      android:id="@+id/btnSaveTask"
+      android:layout_width="164dp"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:minHeight="60dp"
+      android:text="@string/save" />
+
+  <com.google.android.material.button.MaterialButton
+      android:id="@+id/btnCancelTask"
+      android:layout_width="162dp"
+      android:layout_height="wrap_content"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentBottom="true"
+      android:minHeight="60dp"
+      android:text="@string/cancel" />
+
+</RelativeLayout>
