@@ -1,24 +1,12 @@
 <resources>
     <string name="app_name">TodoList</string>
-    <string name="first_name">First name</string>
-    <string name="last_name">Last name</string>
-    <string name="full_name">Full name</string>
-    <string name="phone_number">Phone number</string>
-    <string name="save">Save</string>
-    <string name="cancel">Cancel</string>
-    <string name="create_task">Create new task</string>
-    <string name="edit_task">Edit task</string>
-    <string name="title">"Title"</string>
-    <string name="description">"Description"</string>
-    <string name="isPublic">"Public"</string>
-    <string name="isCompleted">"Completed"</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="save">Speichern</string>
+    <string name="delete">Löschen</string>
+    <string name="create_task">Neue Aufgabe erstellen</string>
+    <string name="edit_task">Aufgabe bearbeiten</string>
+    <string name="title">"Titel"</string>
+    <string name="description">"Beschreibung"</string>
+    <string name="isCompleted">"Erledigt"</string>
+    <string name="isPrivate">Privat</string>
+    <string name="isPublic">Öffentlich</string>
 </resources>

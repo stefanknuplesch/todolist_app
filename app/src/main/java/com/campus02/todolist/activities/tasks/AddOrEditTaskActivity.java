@@ -2,8 +2,8 @@ package com.campus02.todolist.activities.tasks;
 
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,10 +17,10 @@ import com.campus02.todolist.model.tasks.Task;
 import com.campus02.todolist.model.tasks.TasksService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import okhttp3.Request;
 import okio.Buffer;
@@ -34,10 +34,10 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
 
   TextInputEditText txtTitle;
   TextInputEditText txtDescription;
-  MaterialCheckBox cbIsPublic;
   MaterialCheckBox cbIsCompleted;
   MaterialButton btnSave;
   MaterialButton btnCancel;
+  RadioGroup rgIsPublic;
 
   Task task;
 
@@ -186,9 +186,9 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
     txtTitle = findViewById(R.id.txtTitle);
     txtDescription = findViewById(R.id.txtDescription);
     cbIsCompleted = findViewById(R.id.cbIsCompleted);
-    cbIsPublic = findViewById(R.id.cbIsPublic);
+    rgIsPublic = findViewById(R.id.rgIsPublic);
     btnSave = findViewById(R.id.btnSaveTask);
-    btnCancel = findViewById(R.id.btnCancelTask);
+    btnCancel = findViewById(R.id.btnDeleteTask);
   }
 
   private void enableForm() { enableOrDisableForm(true); }
@@ -209,22 +209,38 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
   private void populateFormFromTask(Task task) {
     txtTitle.setText(task.getTitle());
     txtDescription.setText(task.getDescription());
-    cbIsPublic.setChecked(task.isPublic());
     cbIsCompleted.setChecked(task.isCompleted());
+    rgIsPublic.check(getIsPublicRadioId(task.isPublic()));
   }
 
   private void populateTaskFromForm(Task task) {
     task.setTitle(String.valueOf(txtTitle.getText()));
     task.setDescription(String.valueOf(txtDescription.getText()));
     task.setIsCompleted(cbIsCompleted.isChecked());
-    task.setIsPublic(cbIsPublic.isChecked());
+    task.setIsPublic(getIsPublicValue());
   }
 
   private void cleanForm() {
     txtTitle.setText("");
     txtDescription.setText("");
-
     txtTitle.requestFocus();
+  }
+
+  private boolean getIsPublicValue() {
+    int selectedId = rgIsPublic.getCheckedRadioButtonId();
+    switch(selectedId) {
+      case R.id.rbPublic:
+        return true;
+      default:
+        return false;
+    }
+  }
+
+  private int getIsPublicRadioId(boolean isPublic) {
+    if (isPublic)
+      return R.id.rbPublic;
+    else
+      return R.id.rbPrivate;
   }
 
   // TODO: dann entfernen

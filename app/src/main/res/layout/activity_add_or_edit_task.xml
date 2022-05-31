@@ -7,57 +7,100 @@
   tools:context=".activities.tasks.AddOrEditTaskActivity">
 
   <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+      android:layout_width="400dp"
+      android:layout_height="wrap_content"
+      android:orientation="vertical">
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/txtTitle"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
-        android:gravity="bottom|left"
-        android:hint="@string/title" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+      <com.google.android.material.textfield.TextInputEditText
+          android:id="@+id/txtTitle"
+          android:layout_width="0dp"
+          android:layout_height="69dp"
+          android:layout_marginBottom="5dp"
+          android:layout_weight="3"
+          android:gravity="bottom"
+          android:hint="@string/title"
+          android:maxLength="64" />
+
+      <com.google.android.material.checkbox.MaterialCheckBox
+          android:id="@+id/cbIsCompleted"
+          android:layout_width="0dp"
+          android:layout_height="match_parent"
+          android:layout_marginHorizontal="10dp"
+          android:layout_weight="1"
+          android:hint="@string/isCompleted" />
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/txtDescription"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:hint="@string/description"
-        android:lines="4"
         android:gravity="bottom"
-        android:singleLine="false" />
+        android:hint="@string/description"
+        android:maxLength="1024" />
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/cbIsCompleted"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:hint="@string/isCompleted"/>
+        android:layout_height="50dp"
+        android:orientation="horizontal">
 
-    <com.google.android.material.checkbox.MaterialCheckBox
-        android:id="@+id/cbIsPublic"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:hint="@string/isPublic"/>
+      <RadioGroup
+          android:id="@+id/rgIsPublic"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginHorizontal="10dp"
+          android:checkedButton="@+id/rbPrivate"
+          android:orientation="horizontal">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rbPrivate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/isPrivate" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/rbPublic"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/isPublic" />
+      </RadioGroup>
+
+    </LinearLayout>
 
   </LinearLayout>
 
-  <com.google.android.material.button.MaterialButton
-      android:id="@+id/btnSaveTask"
-      android:layout_width="164dp"
-      android:layout_height="wrap_content"
-      android:layout_alignParentBottom="true"
-      android:minHeight="60dp"
-      android:text="@string/save" />
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="50dp"
+      android:orientation="horizontal"
+      android:layout_alignParentBottom="true">
 
-  <com.google.android.material.button.MaterialButton
-      android:id="@+id/btnCancelTask"
-      android:layout_width="162dp"
-      android:layout_height="wrap_content"
-      android:layout_alignParentEnd="true"
-      android:layout_alignParentBottom="true"
-      android:minHeight="60dp"
-      android:text="@string/cancel" />
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSaveTask"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:minHeight="60dp"
+        android:text="@string/save" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDeleteTask"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="10dp"
+        android:minHeight="60dp"
+        android:text="@string/delete" />
+
+  </LinearLayout>
+
 
 </RelativeLayout>

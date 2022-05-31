@@ -16,7 +16,7 @@
         <activity
             android:name=".activities.tasks.ShowAllTasksActivity"
             android:exported="true"
-            android:label="Tasks" >
+            android:label="Aufgaben" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -25,7 +25,7 @@
         <activity
             android:name=".activities.tasks.AddOrEditTaskActivity"
             android:exported="true"
-            android:label="Edit task"
+            android:label="Aufgaben bearbeiten"
             android:parentActivityName=".activities.tasks.ShowAllTasksActivity" >
         </activity>
     </application>
