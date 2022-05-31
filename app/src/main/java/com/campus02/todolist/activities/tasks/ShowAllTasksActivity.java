@@ -60,7 +60,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Task>> call, Throwable t) {
-                Toast.makeText(ShowAllTasksActivity.this, "Ups! Something went wrong :-(\nFailed to load tasks.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ShowAllTasksActivity.this, "Fehler beim Laden der Tasks.", Toast.LENGTH_SHORT).show();
                 createAndSetTaskAdapter(new ArrayList<>());
             }
 
