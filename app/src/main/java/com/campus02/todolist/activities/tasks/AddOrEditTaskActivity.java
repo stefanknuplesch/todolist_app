@@ -1,11 +1,13 @@
 package com.campus02.todolist.activities.tasks;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.campus02.todolist.R;
@@ -144,10 +146,12 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
                 enableForm();
                 cleanForm();
                 task = new Task();
+                btnDelete.setEnabled(false);
               }
               else {
                 displayValidationErrors(result.getErrors());
                 enableForm();
+                btnDelete.setEnabled(false);
               }
             }
 
@@ -155,14 +159,44 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
             public void onFailure(Call<Task> call, Throwable t) {
               Toast.makeText(AddOrEditTaskActivity.this, "Ups! Something went wrong :-(\nFailed to add task.", Toast.LENGTH_SHORT).show();
               enableForm();
+              btnDelete.setEnabled(false);
             }
           });
       }
     });
 
-    /*btnDelete.setOnClickListener(view -> {
-
-    });*/
+    btnDelete.setOnClickListener(view -> {
+      if (!taskAlreadyExists)
+        return;
+      AlertDialog.Builder alert = new AlertDialog.Builder(this);
+      alert.setTitle("Task löschen");
+      alert.setMessage("Soll der Task wirklich gelöscht werden?");
+      alert.setPositiveButton("Ja", (dialog, which) -> {
+        tasksService.deleteTask(taskId, TEMP_USER_ID).enqueue(new Callback<Task>() {
+          @Override
+          public void onResponse(Call<Task> call, Response<Task> response) {
+            debug(req(response.raw().request()));
+            debug(response.raw().toString());
+            Result<Task> result = new Result<>(response);
+            if (result.isSuccessful()) {
+              Toast.makeText(AddOrEditTaskActivity.this, "Task successfully deleted :-)", Toast.LENGTH_SHORT).show();
+              finish();
+            }
+            else {
+              displayValidationErrors(result.getErrors());
+              enableForm();
+            }
+          }
+          @Override
+          public void onFailure(Call<Task> call, Throwable t) {
+            Toast.makeText(AddOrEditTaskActivity.this, "Ups! Something went wrong :-(\nFailed to delete task.", Toast.LENGTH_SHORT).show();
+            enableForm();
+          }
+        });
+      });
+      alert.setNegativeButton("Nein", (dialog, which) -> dialog.cancel());
+      alert.show();
+    });
   }
 
   private void displayValidationErrors(ValidationErrors errors) {
