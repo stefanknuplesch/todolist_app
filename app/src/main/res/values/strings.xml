@@ -9,4 +9,12 @@
     <string name="isCompleted">"Erledigt"</string>
     <string name="isPrivate">Privat</string>
     <string name="isPublic">Öffentlich</string>
+    <string name="login">Einloggen</string>
+    <string name="register">Registrieren</string>
+    <string name="password">Passwort</string>
+    <string name="userName">Benutzername</string>
+    <string name="email">E-Mail Adresse</string>
+    <string name="notRegisteredYet">Noch keinen Account? Jetzt registrieren!</string>
+    <string name="submit">Absenden</string>
+    <string name="registration">Registrierung</string>
 </resources>

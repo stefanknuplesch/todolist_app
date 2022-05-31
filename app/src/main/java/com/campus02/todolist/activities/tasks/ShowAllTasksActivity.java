@@ -65,7 +65,8 @@ public class ShowAllTasksActivity extends AppCompatActivity {
             }
 
             private void createAndSetTaskAdapter(List<Task> tasks) {
-                TaskAdapter taskAdapter = getNewSortedAdapter(tasks);
+                Collections.sort(tasks);
+                TaskAdapter taskAdapter = new TaskAdapter(tasks);
                 taskAdapter.setCallback((task, isChecked) -> {
                     task.setIsCompleted(isChecked);
                     tasksService
@@ -91,9 +92,5 @@ public class ShowAllTasksActivity extends AppCompatActivity {
                 rvTasks.setAdapter(taskAdapter);
             }
         });
-    }
-    private TaskAdapter getNewSortedAdapter(List<Task> tasks) {
-        Collections.sort(tasks);
-        return new TaskAdapter(tasks);
     }
 }

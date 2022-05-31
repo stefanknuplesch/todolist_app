@@ -14,19 +14,27 @@
         android:theme="@style/Theme.TodoList"
         android:usesCleartextTraffic="true" >
         <activity
-            android:name=".activities.tasks.ShowAllTasksActivity"
+            android:name=".activities.users.LoginActivity"
             android:exported="true"
-            android:label="Aufgaben" >
+            android:label="Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".activities.users.RegistrationActivity"
+            android:exported="true"
+            android:label="Benutzerregistrierung"
+            android:parentActivityName=".activities.tasks.ShowAllTasksActivity" />
+        <activity
+            android:name=".activities.tasks.ShowAllTasksActivity"
+            android:exported="true"
+            android:label="Aufgaben" />
+        <activity
             android:name=".activities.tasks.AddOrEditTaskActivity"
             android:exported="true"
             android:label="Aufgaben bearbeiten"
-            android:parentActivityName=".activities.tasks.ShowAllTasksActivity" >
-        </activity>
+            android:parentActivityName=".activities.tasks.ShowAllTasksActivity" />
     </application>
 </manifest>
