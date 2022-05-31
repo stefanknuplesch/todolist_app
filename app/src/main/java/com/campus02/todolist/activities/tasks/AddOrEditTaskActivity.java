@@ -116,7 +116,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
               debug(response.raw().toString());
               Result<Task> result = new Result<>(response);
               if (result.isSuccessful()) {
-                Toast.makeText(AddOrEditTaskActivity.this, "Task successfully updated :-)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich aktualisiert.", Toast.LENGTH_SHORT).show();
                 finish();
               }
               else {
@@ -127,7 +127,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Task> call, Throwable t) {
-              Toast.makeText(AddOrEditTaskActivity.this, "Ups! Something went wrong :-(\nFailed to save task.", Toast.LENGTH_SHORT).show();
+              Toast.makeText(AddOrEditTaskActivity.this, "Fehler beim Aktualisieren der Aufgabe.", Toast.LENGTH_SHORT).show();
               enableForm();
             }
           });
@@ -142,7 +142,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
               debug(response.raw().toString());
               Result<Task> result = new Result<>(response);
               if (result.isSuccessful()) {
-                Toast.makeText(AddOrEditTaskActivity.this, "Task successfully added :-)\nAdd another one if you wish, or go back.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich erstellt.", Toast.LENGTH_SHORT).show();
                 enableForm();
                 cleanForm();
                 task = new Task();
@@ -157,7 +157,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Task> call, Throwable t) {
-              Toast.makeText(AddOrEditTaskActivity.this, "Ups! Something went wrong :-(\nFailed to add task.", Toast.LENGTH_SHORT).show();
+              Toast.makeText(AddOrEditTaskActivity.this, "Fehler beim Erstellen der Aufgabe.", Toast.LENGTH_SHORT).show();
               enableForm();
               btnDelete.setEnabled(false);
             }
@@ -169,8 +169,8 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       if (!taskAlreadyExists)
         return;
       AlertDialog.Builder alert = new AlertDialog.Builder(this);
-      alert.setTitle("Task löschen");
-      alert.setMessage("Soll der Task wirklich gelöscht werden?");
+      alert.setTitle("Aufgabe löschen");
+      alert.setMessage("Soll die Aufgabe wirklich gelöscht werden?");
       alert.setPositiveButton("Ja", (dialog, which) -> {
         tasksService.deleteTask(taskId, TEMP_USER_ID).enqueue(new Callback<Task>() {
           @Override
@@ -179,7 +179,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
             debug(response.raw().toString());
             Result<Task> result = new Result<>(response);
             if (result.isSuccessful()) {
-              Toast.makeText(AddOrEditTaskActivity.this, "Task successfully deleted :-)", Toast.LENGTH_SHORT).show();
+              Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich gelöscht", Toast.LENGTH_SHORT).show();
               finish();
             }
             else {
@@ -189,7 +189,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
           }
           @Override
           public void onFailure(Call<Task> call, Throwable t) {
-            Toast.makeText(AddOrEditTaskActivity.this, "Ups! Something went wrong :-(\nFailed to delete task.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddOrEditTaskActivity.this, "Fehler beim Löschen der Aufgabe.", Toast.LENGTH_SHORT).show();
             enableForm();
           }
         });
