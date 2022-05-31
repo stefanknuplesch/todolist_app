@@ -67,6 +67,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
 
           private void createAndSetTaskAdapter(List<Task> tasks) {
             TaskAdapter taskAdapter = new TaskAdapter(tasks);
+            taskAdapter.setCallback(Task::setIsCompleted);
             rvTasks.setAdapter(taskAdapter);
           }
     });

@@ -61,6 +61,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
     else {
       this.setTitle(R.string.create_task);
       enableForm();
+      btnDelete.setEnabled(false);
     }
 
     TasksService tasksService = RetrofitTasksServiceBuilder.getTasksService();
@@ -159,6 +160,9 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       }
     });
 
+    /*btnDelete.setOnClickListener(view -> {
+
+    });*/
   }
 
   private void displayValidationErrors(ValidationErrors errors) {

@@ -13,9 +13,11 @@ import com.google.android.material.checkbox.MaterialCheckBox;
 public class TaskHolder extends RecyclerView.ViewHolder {
 
   TextView task;
+  MaterialCheckBox completed;
 
   public TaskHolder(@NonNull View itemView) {
     super(itemView);
     task = itemView.findViewById(R.id.tvTitle);
+    completed = itemView.findViewById(R.id.cbCompleted);
   }
 }

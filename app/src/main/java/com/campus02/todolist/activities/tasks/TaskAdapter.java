@@ -16,6 +16,7 @@ import java.util.List;
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
   private List<Task> tasks;
+  private Callback callback;
 
   public TaskAdapter(List<Task> tasks) {
     this.tasks = tasks;
@@ -32,19 +33,31 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
   public void onBindViewHolder(TaskHolder holder, int position) {
     Task task = tasks.get(position);
     holder.task.setText(task.getTitle());
-
+    holder.completed.setTag(task.getId());
     holder.itemView.setTag(task.getId());
-
     holder.itemView.setOnClickListener(itemView -> {
       int taskId = (int)itemView.getTag();
       Intent intent = new Intent(itemView.getContext(), AddOrEditTaskActivity.class);
       intent.putExtra(IntentExtras.TASK_ID, taskId);
       itemView.getContext().startActivity(intent);
     });
+    holder.completed.setOnCheckedChangeListener((cb, isChecked) -> {
+      if (callback != null) {
+        callback.onCheckedChanged(task, isChecked);
+      }
+    });
   }
 
   @Override
   public int getItemCount() {
     return tasks.size();
+  }
+
+  public interface Callback {
+    void onCheckedChanged(Task task, boolean isChecked);
+  }
+
+  public void setCallback(Callback callback) {
+    this.callback = callback;
   }
 }
