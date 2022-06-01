@@ -29,6 +29,8 @@ public class Task implements Comparable<Task> {
   private Long lastModifiedTimestamp;
   @ColumnInfo(name = "isSynced")
   private boolean isSynced;
+  @ColumnInfo(name = "isDeleted")
+  private boolean isDeleted;
 
   @NonNull
   public UUID getId() {
@@ -101,6 +103,13 @@ public class Task implements Comparable<Task> {
 
   public void setSynced(boolean synced) {
     isSynced = synced;
+  }
+
+  public boolean isDeleted() {
+    return isDeleted;
+  }
+  public void setDeleted(boolean deleted) {
+    isDeleted = deleted;
   }
 
   @Override

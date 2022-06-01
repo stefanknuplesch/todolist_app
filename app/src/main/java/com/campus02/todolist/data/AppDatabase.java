@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.campus02.todolist.model.tasks.Task;
 import com.campus02.todolist.model.tasks.TaskDao;
 
-@Database(entities = {Task.class}, version = 2)
+@Database(entities = {Task.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
 
     public static AppDatabase getInstance(Context context) {

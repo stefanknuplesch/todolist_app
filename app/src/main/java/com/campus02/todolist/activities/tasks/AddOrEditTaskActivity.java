@@ -218,7 +218,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
             Toast.makeText(AddOrEditTaskActivity.this, "Fehler beim Löschen der Aufgabe.", Toast.LENGTH_SHORT).show();
             enableForm();
           }*/
-        db.taskDao().delete(task);
+        db.taskDao().markDeleted(task.getId());
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich gelöscht", Toast.LENGTH_SHORT).show();
         finish();
         });
@@ -316,21 +316,5 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       return R.id.rbPublic;
     else
       return R.id.rbPrivate;
-  }
-
-  // TODO: dann entfernen
-  private void debug(String text) {
-    android.util.Log.d("AddOrEditTaskActivity", text);
-  }
-  private String req(Request req){
-   try {
-     Request copy = req.newBuilder().build();
-     Buffer buffer = new Buffer();
-     if (copy.body() != null)
-      copy.body().writeTo(buffer);
-     return buffer.readUtf8();
-   } catch (final IOException e) {
-     return "did not work";
-   }
   }
 }

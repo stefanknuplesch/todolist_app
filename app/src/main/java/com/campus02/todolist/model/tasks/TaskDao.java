@@ -11,8 +11,11 @@ import java.util.UUID;
 
 @Dao
 public interface TaskDao {
-    @Query("SELECT * FROM tasks where originatorUserId = :userId or isPublic = 1")
-    List<Task> getAll(int userId);
+    @Query("SELECT * " +
+            " FROM tasks " +
+            "WHERE (originatorUserId = :userId OR isPublic = 1)" +
+            "  AND (isDeleted = :includeDeleted OR :includeDeleted = 1)")
+    List<Task> getAll(int userId, boolean includeDeleted);
 
     @Query("SELECT * FROM Tasks WHERE id = :id")
     Task getById(UUID id);
@@ -23,6 +26,13 @@ public interface TaskDao {
     @Update
     void update(Task... tasks);
 
+    @Query("UPDATE tasks SET isDeleted = 1 WHERE id = :id")
+    void markDeleted(UUID id);
+
+    @Query("UPDATE tasks SET isCompleted = :completed WHERE id = :id")
+    void markCompleted(UUID id, boolean completed);
+
     @Delete
     void delete(Task... tasks);
+
 }

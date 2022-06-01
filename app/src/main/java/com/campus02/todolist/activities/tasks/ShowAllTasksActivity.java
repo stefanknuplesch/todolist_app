@@ -17,23 +17,18 @@ import com.campus02.todolist.R;
 import com.campus02.todolist.activities.Constants;
 import com.campus02.todolist.activities.users.LoginActivity;
 import com.campus02.todolist.data.AppDatabase;
-import com.campus02.todolist.model.Result;
 import com.campus02.todolist.model.tasks.RetrofitTasksServiceBuilder;
 import com.campus02.todolist.model.tasks.Task;
-import com.campus02.todolist.model.tasks.TasksService;
+import com.campus02.todolist.model.tasks.TaskManager;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ShowAllTasksActivity extends AppCompatActivity {
-    private final int TEMP_USER_ID = 1;
+    private SharedPreferences sharedPreferences;
+    private TaskManager taskManager;
+    private int userId;
     private RecyclerView rvTasks;
 
     @Override
@@ -41,19 +36,15 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_show_all_tasks);
-
         rvTasks = findViewById(R.id.rvTasks);
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
+        initializeComponents();
 
-        FloatingActionButton fabAddNewContact = findViewById(R.id.fabAddNewTask);
-        fabAddNewContact.setOnClickListener(view -> {
-            Intent intent = new Intent(this, AddOrEditTaskActivity.class);
-            startActivity(intent);
-        });
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setDisplayHomeAsUpEnabled(false);
-        }
+        taskManager = new TaskManager(AppDatabase.getInstance(this), RetrofitTasksServiceBuilder.getTasksService());
+        sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
+        userId = sharedPreferences.getInt(Constants.PREF_USERID, -1);
+
+        taskManager.fetchTasks(userId);
     }
 
     @Override
@@ -78,10 +69,9 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     }
 
     private void doLogout() {
-        SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
-        String loggedOutUsername = sp.getString(Constants.PREF_USERNAME, "");
-        sp.edit().remove(Constants.PREF_USERID).apply();
-        sp.edit().remove(Constants.PREF_USERNAME).apply();
+        String loggedOutUsername = sharedPreferences.getString(Constants.PREF_USERNAME, "");
+        sharedPreferences.edit().remove(Constants.PREF_USERID).apply();
+        sharedPreferences.edit().remove(Constants.PREF_USERNAME).apply();
 
         if (!loggedOutUsername.isEmpty()) {
             Toast.makeText(this, loggedOutUsername + " wurde erfolgreich ausgeloggt.", Toast.LENGTH_SHORT).show();
@@ -91,14 +81,25 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         finish();
     }
 
+    private void initializeComponents() {
+        FloatingActionButton fabAddNewContact = findViewById(R.id.fabAddNewTask);
+        fabAddNewContact.setOnClickListener(view -> {
+            Intent intent = new Intent(this, AddOrEditTaskActivity.class);
+            startActivity(intent);
+        });
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(false);
+        }
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        populateTasks();
+        populateTasksFromDatabase();
     }
 
-    private void populateTasks() {
+    private void populateTasksFromDatabase() {
         /*TasksService tasksService = RetrofitTasksServiceBuilder.getTasksService();
 
         tasksService.getTaskOverview(TEMP_USER_ID).enqueue(new Callback<List<Task>>() {
@@ -141,15 +142,16 @@ public class ShowAllTasksActivity extends AppCompatActivity {
                 rvTasks.setAdapter(taskAdapter);
             }
         });*/
-
-        AppDatabase db = AppDatabase.getInstance(this);
-        List<Task> tasks = db.taskDao().getAll(TEMP_USER_ID);
+        List<Task> tasks = taskManager.getDao().getAll(userId, false);
         createAndSetTaskAdapter(tasks);
 
     }
     private void createAndSetTaskAdapter(List<Task> tasks) {
         Collections.sort(tasks);
         TaskAdapter taskAdapter = new TaskAdapter(tasks);
+        taskAdapter.setCallback((task, isChecked) -> {
+            taskManager.getDao().markCompleted(task.getId(), isChecked);
+        });
         rvTasks.setAdapter(taskAdapter);
     }
 
