@@ -23,8 +23,6 @@ public class Task implements Comparable<Task> {
   private boolean isCompleted;
   @ColumnInfo(name = "originatorUserId")
   private Integer originatorUserId;
-  @ColumnInfo(name = "lastModifiedUserId")
-  private Integer lastModifiedUserId;
   @ColumnInfo(name = "lastModifiedTimestamp")
   private Long lastModifiedTimestamp;
   @ColumnInfo(name = "isSynced")
@@ -79,14 +77,6 @@ public class Task implements Comparable<Task> {
 
   public void setOriginatorUserId(Integer originatorUserId) {
     this.originatorUserId = originatorUserId;
-  }
-
-  public Integer getLastModifiedUserId() {
-    return lastModifiedUserId;
-  }
-
-  public void setLastModifiedUserId(Integer lastModifiedUserId) {
-    this.lastModifiedUserId = lastModifiedUserId;
   }
 
   public Long getLastModifiedTimestamp() {

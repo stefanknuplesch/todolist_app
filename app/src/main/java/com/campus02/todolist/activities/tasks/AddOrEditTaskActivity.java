@@ -142,7 +142,6 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
               enableForm();
             }
           });*/
-        task.setLastModifiedUserId(TEMP_USER_ID);
         task.setLastModifiedTimestamp(System.currentTimeMillis());
         db.taskDao().update(task);
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich aktualisiert.", Toast.LENGTH_SHORT).show();
@@ -180,7 +179,6 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
           });*/
         task.setId(UUID.randomUUID());
         task.setOriginatorUserId(TEMP_USER_ID);
-        task.setLastModifiedUserId(TEMP_USER_ID);
         task.setLastModifiedTimestamp(System.currentTimeMillis());
         db.taskDao().insert(task);
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich erstellt.", Toast.LENGTH_SHORT).show();
