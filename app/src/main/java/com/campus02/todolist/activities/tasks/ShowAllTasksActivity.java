@@ -1,14 +1,22 @@
 package com.campus02.todolist.activities.tasks;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.campus02.todolist.R;
+import com.campus02.todolist.activities.Constants;
+import com.campus02.todolist.activities.users.LoginActivity;
+import com.campus02.todolist.data.AppDatabase;
 import com.campus02.todolist.model.Result;
 import com.campus02.todolist.model.tasks.RetrofitTasksServiceBuilder;
 import com.campus02.todolist.model.tasks.Task;
@@ -18,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,7 +50,47 @@ public class ShowAllTasksActivity extends AppCompatActivity {
             Intent intent = new Intent(this, AddOrEditTaskActivity.class);
             startActivity(intent);
         });
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(false);
+        }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.optSynchronize:
+                // TODO: synchronisieren per Button
+                return true;
+            case R.id.optLogout:
+                doLogout();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void doLogout() {
+        SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
+        String loggedOutUsername = sp.getString(Constants.PREF_USERNAME, "");
+        sp.edit().remove(Constants.PREF_USERID).apply();
+        sp.edit().remove(Constants.PREF_USERNAME).apply();
+
+        if (!loggedOutUsername.isEmpty()) {
+            Toast.makeText(this, loggedOutUsername + " wurde erfolgreich ausgeloggt.", Toast.LENGTH_SHORT).show();
+        }
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 
     @Override
     protected void onResume() {
@@ -50,7 +99,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     }
 
     private void populateTasks() {
-        TasksService tasksService = RetrofitTasksServiceBuilder.getTasksService();
+        /*TasksService tasksService = RetrofitTasksServiceBuilder.getTasksService();
 
         tasksService.getTaskOverview(TEMP_USER_ID).enqueue(new Callback<List<Task>>() {
             @Override
@@ -68,7 +117,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
                 Collections.sort(tasks);
                 TaskAdapter taskAdapter = new TaskAdapter(tasks);
                 taskAdapter.setCallback((task, isChecked) -> {
-                    task.setIsCompleted(isChecked);
+                    task.setCompleted(isChecked);
                     tasksService
                             .updateTaskStatus(task.getId(), task.isCompleted(), TEMP_USER_ID)
                             .enqueue(new Callback<Task>() {
@@ -91,6 +140,17 @@ public class ShowAllTasksActivity extends AppCompatActivity {
                 });
                 rvTasks.setAdapter(taskAdapter);
             }
-        });
+        });*/
+
+        AppDatabase db = AppDatabase.getInstance(this);
+        List<Task> tasks = db.taskDao().getAll(TEMP_USER_ID);
+        createAndSetTaskAdapter(tasks);
+
     }
+    private void createAndSetTaskAdapter(List<Task> tasks) {
+        Collections.sort(tasks);
+        TaskAdapter taskAdapter = new TaskAdapter(tasks);
+        rvTasks.setAdapter(taskAdapter);
+    }
+
 }

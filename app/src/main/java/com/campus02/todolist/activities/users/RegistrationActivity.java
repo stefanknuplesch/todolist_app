@@ -39,7 +39,6 @@ public class RegistrationActivity extends AppCompatActivity {
         usersService = RetrofitUsersServiceBuilder.getUsersService();
 
         btnSubmit.setOnClickListener(view -> {
-            // TODO: Register Request
             User newUser = new User();
             newUser.setName(etUsername.getText().toString());
             newUser.setEmail(etEmail.getText().toString());
@@ -59,14 +58,11 @@ public class RegistrationActivity extends AppCompatActivity {
                         Toast.makeText(RegistrationActivity.this, "Login nicht erfolgreich. Email und Passwort prüfen!", Toast.LENGTH_SHORT).show();
                     }
                 }
-
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
                     Toast.makeText(RegistrationActivity.this, "Fehler beim Registrieren.", Toast.LENGTH_SHORT).show();
                 }
             });
-            Toast.makeText(RegistrationActivity.this, "Erfolgreich registriert", Toast.LENGTH_SHORT).show();
-            finish();
         });
     }
 }

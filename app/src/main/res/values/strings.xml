@@ -17,4 +17,6 @@
     <string name="notRegisteredYet">Noch keinen Account? Jetzt registrieren!</string>
     <string name="submit">Absenden</string>
     <string name="registration">Registrierung</string>
+    <string name="sync">Synchronisieren</string>
+    <string name="logout">Ausloggen</string>
 </resources>

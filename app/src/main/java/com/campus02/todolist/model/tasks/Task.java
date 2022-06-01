@@ -1,21 +1,41 @@
 package com.campus02.todolist.model.tasks;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import java.util.UUID;
+
+@Entity(tableName = "tasks")
 public class Task implements Comparable<Task> {
 
-  private Integer id;
+  @PrimaryKey
+  @NonNull
+  private UUID id;
+  @ColumnInfo(name = "title")
   private String title;
+  @ColumnInfo(name = "description")
   private String description;
+  @ColumnInfo(name = "isPublic")
   private boolean isPublic;
+  @ColumnInfo(name = "isCompleted")
   private boolean isCompleted;
+  @ColumnInfo(name = "originatorUserId")
   private Integer originatorUserId;
+  @ColumnInfo(name = "lastModifiedUserId")
   private Integer lastModifiedUserId;
+  @ColumnInfo(name = "lastModifiedTimestamp")
   private Long lastModifiedTimestamp;
+  @ColumnInfo(name = "isSynced")
+  private boolean isSynced;
 
-  public Integer getId() {
+  @NonNull
+  public UUID getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(@NonNull UUID id) {
     this.id = id;
   }
 
@@ -36,45 +56,51 @@ public class Task implements Comparable<Task> {
   }
 
   public boolean isPublic() {
-    return this.isPublic;
+    return isPublic;
   }
 
-  public void setIsPublic(boolean isPublic) {
-    this.isPublic = isPublic;
+  public void setPublic(boolean aPublic) {
+    isPublic = aPublic;
   }
 
   public boolean isCompleted() {
     return isCompleted;
   }
 
-  public void setIsCompleted(boolean isCompleted) {
-    this.isCompleted = isCompleted;
+  public void setCompleted(boolean completed) {
+    isCompleted = completed;
   }
 
   public Integer getOriginatorUserId() {
     return originatorUserId;
   }
 
+  public void setOriginatorUserId(Integer originatorUserId) {
+    this.originatorUserId = originatorUserId;
+  }
+
   public Integer getLastModifiedUserId() {
     return lastModifiedUserId;
+  }
+
+  public void setLastModifiedUserId(Integer lastModifiedUserId) {
+    this.lastModifiedUserId = lastModifiedUserId;
   }
 
   public Long getLastModifiedTimestamp() {
     return lastModifiedTimestamp;
   }
 
-  @Override
-  public String toString() {
-    return "Task{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", description='" + description + '\'' +
-            ", isPublic=" + isPublic +
-            ", isCompleted=" + isCompleted +
-            ", originatorUserId=" + originatorUserId +
-            ", lastModifiedUserId=" + lastModifiedUserId +
-            ", lastModifiedTimestamp=" + lastModifiedTimestamp +
-            '}';
+  public void setLastModifiedTimestamp(Long lastModifiedTimestamp) {
+    this.lastModifiedTimestamp = lastModifiedTimestamp;
+  }
+
+  public boolean isSynced() {
+    return isSynced;
+  }
+
+  public void setSynced(boolean synced) {
+    isSynced = synced;
   }
 
   @Override

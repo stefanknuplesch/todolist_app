@@ -1,12 +1,16 @@
 package com.campus02.todolist.activities.users;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.campus02.todolist.R;
+import com.campus02.todolist.activities.Constants;
 import com.campus02.todolist.activities.tasks.ShowAllTasksActivity;
 import com.campus02.todolist.model.Result;
 import com.campus02.todolist.model.users.RetrofitUsersServiceBuilder;
@@ -25,12 +29,18 @@ public class LoginActivity extends AppCompatActivity {
     MaterialButton btnLogin, btnRegister;
     UsersService usersService;
 
+    SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         Login();
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(false);
+        }
     }
 
     void Login(){
@@ -39,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
         usersService = RetrofitUsersServiceBuilder.getUsersService();
+
+        sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, Context.MODE_PRIVATE);
 
         btnLogin.setOnClickListener(view -> {
             User loginUser = new User();
@@ -50,11 +62,13 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<User> call, Response<User> response) {
                     Result<User> result = new Result<>(response);
                     if (result.isSuccessful() && result.getValue().getId() != null) {
-                        Toast.makeText(LoginActivity.this, "Login erfolgreich\nWillkommen " + result.getValue().getName(), Toast.LENGTH_SHORT).show();
-                        // TODO: UserID lokal speichern
-                        android.util.Log.d("LoginActivity", "UserId="+result.getValue().getId().toString());
+                        User user = result.getValue();
+                        Toast.makeText(LoginActivity.this, "Login erfolgreich\nWillkommen " + user.getName(), Toast.LENGTH_SHORT).show();
+                        sharedPreferences.edit().putInt(Constants.PREF_USERID, user.getId()).apply();
+                        sharedPreferences.edit().putString(Constants.PREF_USERNAME, user.getName()).apply();
                         Intent intent = new Intent(LoginActivity.this, ShowAllTasksActivity.class);
                         startActivity(intent);
+                        finish();
                     }
                     else {
                         // TODO: Fehlerhandling
@@ -77,6 +91,5 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 }

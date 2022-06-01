@@ -12,6 +12,7 @@ import com.campus02.todolist.activities.IntentExtras;
 import com.campus02.todolist.model.tasks.Task;
 
 import java.util.List;
+import java.util.UUID;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
 
@@ -36,7 +37,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     holder.completed.setChecked(task.isCompleted());
     holder.itemView.setTag(task.getId());
     holder.itemView.setOnClickListener(itemView -> {
-      int taskId = (int)itemView.getTag();
+      UUID taskId = (UUID)itemView.getTag();
       Intent intent = new Intent(itemView.getContext(), AddOrEditTaskActivity.class);
       intent.putExtra(IntentExtras.TASK_ID, taskId);
       itemView.getContext().startActivity(intent);
