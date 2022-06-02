@@ -108,7 +108,7 @@ public class Task implements Comparable<Task> {
     boolean b2 = other.isCompleted();
 
     if (b1 == b2)
-      return other.getId().compareTo(this.getId());
+      return this.getTitle().compareTo(other.getTitle());
     else
       return b1 ? 1 : -1;
   }

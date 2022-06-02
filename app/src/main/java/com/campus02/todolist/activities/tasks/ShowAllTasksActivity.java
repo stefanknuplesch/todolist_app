@@ -24,6 +24,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShowAllTasksActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
@@ -31,6 +32,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     private int userId;
     private String userName;
     private RecyclerView rvTasks;
+    private TaskAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.optSynchronize:
                 taskManager.syncTasks(this, userId);
+                adapter.refreshTaskList(retrieveTasksFromLocalDb());
                 return true;
             case R.id.optLogout:
                 doLogout();
@@ -97,20 +100,22 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        populateTasksFromDatabase();
+        createAndSetTaskAdapter(retrieveTasksFromLocalDb());
     }
 
-    private void populateTasksFromDatabase() {
-        List<Task> tasks = taskManager.getDao().getAll(userId, false);
-        createAndSetTaskAdapter(tasks);
+    private List<Task> retrieveTasksFromLocalDb () {
+        return taskManager.getDao().getAll(userId, false)
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
     }
+
     private void createAndSetTaskAdapter(List<Task> tasks) {
-        Collections.sort(tasks);
-        TaskAdapter taskAdapter = new TaskAdapter(tasks);
-        taskAdapter.setCallback((task, isChecked) -> {
+        adapter = new TaskAdapter(tasks);
+        adapter.setCallback((task, isChecked) -> {
             taskManager.getDao().markCompleted(task.getId(), isChecked, System.currentTimeMillis());
         });
-        rvTasks.setAdapter(taskAdapter);
+        rvTasks.setAdapter(adapter);
     }
 
 }
