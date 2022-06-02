@@ -5,7 +5,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public interface UsersService {
-    @POST("/users")
+    @POST("/users/register")
     Call<UserDto> registerUser(@Body User user);
 
     @POST("/users/login")
