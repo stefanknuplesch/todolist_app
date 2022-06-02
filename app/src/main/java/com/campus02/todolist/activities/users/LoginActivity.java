@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -28,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     TextInputEditText etEmail, etPassword;
     MaterialButton btnLogin, btnRegister;
     UsersService usersService;
+    boolean isValid;
 
     SharedPreferences sharedPreferences;
 
@@ -53,6 +56,9 @@ public class LoginActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, Context.MODE_PRIVATE);
 
         btnLogin.setOnClickListener(view -> {
+            if (!validateInputs())
+                return;
+
             User loginUser = new User();
             loginUser.setEmail(etEmail.getText().toString());
             loginUser.setPassword(etPassword.getText().toString());
@@ -92,5 +98,20 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+
+    private boolean validateInputs() {
+        if (TextUtils.isEmpty(etEmail.getText()) || !Patterns.EMAIL_ADDRESS.matcher(etEmail.getText()).matches()) {
+            etEmail.setError("Bitte geben Sie eine gültige E-Mail Adresse ein.");
+            return false;
+        }
+
+        if (etPassword.length() == 0) {
+            etPassword.setError("Bitte geben Sie ihr Passwort ein.");
+            return false;
+        }
+
+        return true;
     }
 }

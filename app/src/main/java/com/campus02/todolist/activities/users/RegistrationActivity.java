@@ -1,6 +1,8 @@
 package com.campus02.todolist.activities.users;
 
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +33,7 @@ public class RegistrationActivity extends AppCompatActivity {
         Registration();
     }
 
-    void Registration(){
+    private void Registration(){
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         etUsername = findViewById(R.id.etUsername);
@@ -39,6 +41,8 @@ public class RegistrationActivity extends AppCompatActivity {
         usersService = RetrofitUsersServiceBuilder.getUsersService();
 
         btnSubmit.setOnClickListener(view -> {
+            if (!validateInputs())
+                return;
             User newUser = new User();
             newUser.setName(etUsername.getText().toString());
             newUser.setEmail(etEmail.getText().toString());
@@ -65,4 +69,21 @@ public class RegistrationActivity extends AppCompatActivity {
             });
         });
     }
+
+    private boolean validateInputs() {
+        if (etUsername.length() == 0) {
+            etUsername.setError("Bitte geben Sie einen Benutzernamen ein!");
+            return false;
+        }
+        if (TextUtils.isEmpty(etEmail.getText()) || !Patterns.EMAIL_ADDRESS.matcher(etEmail.getText()).matches()) {
+            etEmail.setError("Bitte geben Sie eine gültige E-Mail Adresse ein!");
+            return false;
+        }
+        if (etPassword.length() <= 8) {
+            etPassword.setError("Bitte geben Sie ein Passwort ein (min. 8 Zeichen)");
+            return false;
+        }
+        return true;
+    }
 }
+

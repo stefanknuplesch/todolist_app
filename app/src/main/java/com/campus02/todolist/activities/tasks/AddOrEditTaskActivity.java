@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -42,6 +43,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
   MaterialButton btnSave;
   MaterialButton btnDelete;
   RadioGroup rgIsPublic;
+  RadioButton rbPublic;
 
   Task task;
 
@@ -76,6 +78,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       if (task != null) {
         populateFormFromTask(task);
         enableForm();
+        enableOrDisableRadioGroup(rgIsPublic, task.getOriginatorUserId().equals(getCurrentUserId()));
       }
       else {
         task = new Task();
@@ -87,6 +90,9 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
     }
 
     btnSave.setOnClickListener(view -> {
+      if (!validateInputs())
+        return;
+
       populateTaskFromForm(task);
       disableForm();
 
@@ -125,31 +131,12 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
     });
   }
 
-  private void displayValidationErrors(ValidationErrors errors) {
-    txtTitle.setError(null);
-    txtDescription.setError(null);
-
-    errors.errorsWithProperties().forEach(error -> {
-      TextInputEditText editText = null;
-
-      switch (error.property) {
-        case "title" : editText = txtTitle; break;
-        case "description" : editText = txtDescription; break;
-      }
-
-      if (editText != null) editText.setError(error.message);
-    });
-
-    String errorMessage = errors.errorsWithoutPropertiesAsString();
-    if (!errorMessage.isEmpty())
-      Toast.makeText(AddOrEditTaskActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-  }
-
   private void bindFormWidgets() {
     txtTitle = findViewById(R.id.txtTitle);
     txtDescription = findViewById(R.id.txtDescription);
     cbIsCompleted = findViewById(R.id.cbIsCompleted);
     rgIsPublic = findViewById(R.id.rgIsPublic);
+    rbPublic = findViewById(R.id.rbPublic);
     btnSave = findViewById(R.id.btnSaveTask);
     btnDelete = findViewById(R.id.btnDeleteTask);
   }
@@ -221,4 +208,13 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
     SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
     return sp.getInt(Constants.PREF_USERID, -1);
   }
+
+  private boolean validateInputs() {
+    if (txtTitle.length() == 0) {
+      txtTitle.setError("Bitte geben Sie einen Titel ein!");
+      return false;
+    }
+    return true;
+  }
+
 }

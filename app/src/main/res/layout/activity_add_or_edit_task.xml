@@ -65,7 +65,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:buttonTint="@color/dark"
+            android:textStyle="bold"
             android:text="@string/isPrivate" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
@@ -74,7 +74,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textColor="@color/publicTaskColor"
-            android:buttonTint="@color/publicTaskColor"
+            android:textStyle="bold"
             android:text="@string/isPublic" />
       </RadioGroup>
 
