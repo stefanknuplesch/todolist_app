@@ -47,7 +47,6 @@ public class RegistrationActivity extends AppCompatActivity {
             usersService.registerUser(newUser).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    android.util.Log.d("RegistrationActivity", response.raw().toString());
                     Result<User> result = new Result<>(response);
                     // TODO issuccessful handling
                     if (result.isSuccessful() && result.getValue().getId() != null) {

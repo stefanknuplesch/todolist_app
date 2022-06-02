@@ -5,8 +5,15 @@
         android:id="@+id/optSynchronize"
         app:showAsAction="ifRoom"
         android:title="@string/sync" />
+
+    <item
+        android:id="@+id/labUserInfo"
+        app:showAsAction="collapseActionView"
+        android:enabled="false"
+        android:title="Eingeloggt als.."/>
+
     <item
         android:id="@+id/optLogout"
-        app:showAsAction="ifRoom"
+        app:showAsAction="collapseActionView"
         android:title="@string/logout" />
 </menu>

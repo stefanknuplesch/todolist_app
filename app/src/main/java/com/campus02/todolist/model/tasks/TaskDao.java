@@ -28,9 +28,6 @@ public interface TaskDao {
     @Update
     void update(Task... tasks);
 
-    @Delete
-    void delete(Task... tasks);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void mergeInto(List<Task> tasks);
 
@@ -39,8 +36,10 @@ public interface TaskDao {
     void markDeleted(UUID id);
 
     @Transaction
-    @Query("UPDATE tasks SET isCompleted = :completed WHERE id = :id")
-    void markCompleted(UUID id, boolean completed);
+    @Query("UPDATE tasks " +
+            "SET isCompleted = :completed, lastModifiedTimestamp = :timestamp " +
+            "WHERE id = :id")
+    void markCompleted(UUID id, boolean completed, long timestamp);
 
     @Transaction
     @Query("UPDATE tasks SET isSynced = 1 WHERE id in (:idList)")

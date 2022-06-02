@@ -29,6 +29,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private TaskManager taskManager;
     private int userId;
+    private String userName;
     private RecyclerView rvTasks;
 
     @Override
@@ -43,11 +44,13 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         taskManager = new TaskManager(AppDatabase.getInstance(this), RetrofitTasksServiceBuilder.getTasksService());
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
         userId = sharedPreferences.getInt(Constants.PREF_USERID, -1);
+        userName = sharedPreferences.getString(Constants.PREF_USERNAME, "");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
+        menu.findItem(R.id.labUserInfo).setTitle("Eingeloggt als: " + userName);
         return true;
     }
 
@@ -105,7 +108,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         Collections.sort(tasks);
         TaskAdapter taskAdapter = new TaskAdapter(tasks);
         taskAdapter.setCallback((task, isChecked) -> {
-            taskManager.getDao().markCompleted(task.getId(), isChecked);
+            taskManager.getDao().markCompleted(task.getId(), isChecked, System.currentTimeMillis());
         });
         rvTasks.setAdapter(taskAdapter);
     }
