@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -44,6 +45,8 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         initializeComponents();
 
         taskManager = new TaskManager(AppDatabase.getInstance(this), RetrofitTasksServiceBuilder.getTasksService());
+        taskManager.setSyncCompletedCallback(() -> adapter.refreshTaskList(retrieveTasksFromLocalDb()));
+
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
         userId = sharedPreferences.getInt(Constants.PREF_USERID, -1);
         userName = sharedPreferences.getString(Constants.PREF_USERNAME, "");
@@ -62,7 +65,6 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.optSynchronize:
                 taskManager.syncTasks(this, userId);
-                adapter.refreshTaskList(retrieveTasksFromLocalDb());
                 return true;
             case R.id.optLogout:
                 doLogout();

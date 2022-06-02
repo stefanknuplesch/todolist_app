@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.campus02.todolist.activities.tasks.TaskAdapter;
 import com.campus02.todolist.data.AppDatabase;
 import com.campus02.todolist.model.Result;
 import com.google.gson.Gson;
@@ -21,6 +22,7 @@ import retrofit2.Response;
 public class TaskManager {
     private final AppDatabase appDatabase;
     private final TasksService service;
+    private SyncCompletedCallback syncCompletedCallback;
 
     public TaskManager(AppDatabase appDatabase, TasksService service)
     {
@@ -112,6 +114,7 @@ public class TaskManager {
                     // 3) Am Server gelöschte Daten und lokal übriggebliebene endgültig löschen
                     appDatabase.taskDao().deleteByIds(Stream.concat(res.deleted.stream(), deleteLocal.stream()).collect(Collectors.toList()));
 
+                    syncCompletedCallback.invoke();
                     Toast.makeText(context, "Daten wurden erfolgreich synchronisiert!", Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -138,5 +141,14 @@ public class TaskManager {
     }
 
     public TaskDao getDao() { return appDatabase.taskDao(); }
+
+    public interface SyncCompletedCallback {
+        void invoke();
+    }
+    public void setSyncCompletedCallback(SyncCompletedCallback cb) {
+        this.syncCompletedCallback = cb;
+    }
+
+
 
 }
