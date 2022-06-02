@@ -51,7 +51,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
       itemView.getContext().startActivity(intent);
     });
     holder.completed.setOnCheckedChangeListener((cb, isChecked) -> {
-      if (callback != null) { // TODO: live ändern
+      if (callback != null) {
         callback.onCheckedChanged(task, isChecked);
       }
     });

@@ -14,7 +14,7 @@ import retrofit2.Response;
 public class Result<T> {
 
     private T value;
-    private ValidationErrors errors;
+    private APIError error;
 
     public Result(Response<T> response) {
         if (response.isSuccessful()) {
@@ -23,13 +23,11 @@ public class Result<T> {
         else {
             try {
                 Gson gson = new GsonBuilder().create();
-                Type listType = new TypeToken<ArrayList<ValidationErrors>>(){}.getType();
-                List<ValidationError> errorsFromResponse = gson.fromJson(response.errorBody().string(), listType);
+                error = gson.fromJson(response.errorBody().string(), APIError.class);
 
-                errors = new ValidationErrors(errorsFromResponse);
             } catch (IOException e)
             {
-                errors = new ValidationErrors("Unexpected error.");
+                error = new APIError(418, "I'm a teapot", "Unexpected error");
             }
         }
     }
@@ -38,5 +36,6 @@ public class Result<T> {
 
     public T getValue() { return value; }
 
-    public ValidationErrors getErrors() { return errors; }
+    public APIError getError() { return error; }
+
 }

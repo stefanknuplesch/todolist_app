@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.campus02.todolist.R;
 import com.campus02.todolist.activities.Constants;
 import com.campus02.todolist.activities.tasks.ShowAllTasksActivity;
+import com.campus02.todolist.model.APIError;
 import com.campus02.todolist.model.Result;
 import com.campus02.todolist.model.users.UserDto;
 import com.campus02.todolist.model.users.RetrofitUsersServiceBuilder;
@@ -22,6 +23,7 @@ import com.campus02.todolist.model.users.UsersService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,25 +70,17 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<UserDto> call, Response<UserDto> response) {
                     Result<UserDto> result = new Result<>(response);
-                    // TODO issuccessful handling
                     if (result.isSuccessful() && result.getValue().getId() != null) {
-                        UserDto user = result.getValue();
-                        Toast.makeText(LoginActivity.this, "Login erfolgreich\nWillkommen " + user.getName(), Toast.LENGTH_SHORT).show();
-                        sharedPreferences.edit().putInt(Constants.PREF_USERID, user.getId()).apply();
-                        sharedPreferences.edit().putString(Constants.PREF_USERNAME, user.getName()).apply();
-                        Intent intent = new Intent(LoginActivity.this, ShowAllTasksActivity.class);
-                        startActivity(intent);
-                        finish();
+                        processLogin(result.getValue());
                     }
                     else {
-                        // TODO: Fehlerhandling
-                        Toast.makeText(LoginActivity.this, "Login nicht erfolgreich. Email und Passwort prüfen!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Fehler:\n" + result.getError().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserDto> call, Throwable t) {
-                    Toast.makeText(LoginActivity.this, "Fehler beim Einloggen.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
                 }
             });
         });
@@ -99,6 +93,16 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    private void processLogin(UserDto user)
+    {
+        Toast.makeText(LoginActivity.this, "Willkommen " + user.getName() + "!", Toast.LENGTH_SHORT).show();
+        sharedPreferences.edit().putInt(Constants.PREF_USERID, user.getId()).apply();
+        sharedPreferences.edit().putString(Constants.PREF_USERNAME, user.getName()).apply();
+        Intent intent = new Intent(LoginActivity.this, ShowAllTasksActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 

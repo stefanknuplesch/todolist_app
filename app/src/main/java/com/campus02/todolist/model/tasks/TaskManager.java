@@ -4,7 +4,10 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.campus02.todolist.activities.users.RegistrationActivity;
 import com.campus02.todolist.data.AppDatabase;
+import com.campus02.todolist.model.Result;
+import com.campus02.todolist.model.users.UserDto;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -31,12 +34,17 @@ public class TaskManager {
         service.fetchTasks(userId).enqueue(new Callback<List<FetchTaskInfo>>() {
             @Override
             public void onResponse(Call<List<FetchTaskInfo>> call, Response<List<FetchTaskInfo>> response) {
-                // TODO: isSuccessful?
-                processFetchResponse(context, response.body(), userId);
+                Result<List<FetchTaskInfo>> result = new Result<>(response);
+                if (result.isSuccessful()) {
+                    processFetchResponse(context, response.body(), userId);
+                }
+                else {
+                    Toast.makeText(context, "Fehler beim Synchronisieren:\n" + result.getError().getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
             @Override
             public void onFailure(Call<List<FetchTaskInfo>> call, Throwable t) {
-                // TODO: errorhandling
+                Toast.makeText(context, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -98,27 +106,31 @@ public class TaskManager {
             @Override
             public void onResponse(Call<SyncResult> call, Response<SyncResult> response) {
                 Log.d("TASK_MANAGER_JSON_FROM_DB", gson.toJson(response.body()));
-                // TODO: isSuccessful?
-                SyncResult res = response.body();
+                Result<SyncResult> result = new Result<>(response);
+                if (result.isSuccessful() && result.getValue() != null) {
+                    SyncResult res = response.body();
 
-                // 1) Daten vom Server in die lokale DB einfügen
-                appDatabase.taskDao().mergeInto(res.retrieved.stream().map(TaskDto::toSync).collect(Collectors.toList()));
+                    // 1) Daten vom Server in die lokale DB einfügen
+                    appDatabase.taskDao().mergeInto(res.retrieved.stream().map(TaskDto::toSync).collect(Collectors.toList()));
 
-                // 2) Am Server eingefügte Daten auf sync=true setzen
-                appDatabase.taskDao().markSynced(res.persisted);
+                    // 2) Am Server eingefügte Daten auf sync=true setzen
+                    appDatabase.taskDao().markSynced(res.persisted);
 
-                // 3) Am Server gelöschte Daten und lokal übriggebliebene endgültig löschen
-                appDatabase.taskDao().deleteByIds(Stream.concat(res.deleted.stream(), deleteLocal.stream()).collect(Collectors.toList()));
+                    // 3) Am Server gelöschte Daten und lokal übriggebliebene endgültig löschen
+                    appDatabase.taskDao().deleteByIds(Stream.concat(res.deleted.stream(), deleteLocal.stream()).collect(Collectors.toList()));
 
-                Toast.makeText(context, "Daten wurden erfolgreich synchronisiert", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Daten wurden erfolgreich synchronisiert!", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(context, "Fehler:\n" + result.getError().getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
             @Override
             public void onFailure(Call<SyncResult> call, Throwable t) {
-                // TODO errorhandling
+                Toast.makeText(context, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
             }
         });
     }
-
     private void handleRetrieved(List<TaskDto> list) {
         List<Task> tasks = list.stream().map(TaskDto::toSync).collect(Collectors.toList());
         this.appDatabase.taskDao().mergeInto(list.stream().map(TaskDto::toSync).collect(Collectors.toList()));

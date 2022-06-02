@@ -53,19 +53,17 @@ public class RegistrationActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<UserDto> call, Response<UserDto> response) {
                     Result<UserDto> result = new Result<>(response);
-                    // TODO issuccessful handling
-                    if (result.isSuccessful() && result.getValue().getId() != null) {
-                        Toast.makeText(RegistrationActivity.this, "Benutzer erfolgreich registriert", Toast.LENGTH_SHORT).show();
+                    if (result.isSuccessful()) {
+                        Toast.makeText(RegistrationActivity.this, "Benutzer wurde erfolgreich registriert!", Toast.LENGTH_SHORT).show();
                         finish();
                     }
                     else {
-                        // TODO: Fehlerhandling
-                        Toast.makeText(RegistrationActivity.this, "Login nicht erfolgreich. Email und Passwort prüfen!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegistrationActivity.this, "Fehler:\n" + result.getError().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
                 @Override
                 public void onFailure(Call<UserDto> call, Throwable t) {
-                    Toast.makeText(RegistrationActivity.this, "Fehler beim Registrieren.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
                 }
             });
         });
