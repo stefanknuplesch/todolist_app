@@ -6,4 +6,5 @@ import java.util.UUID;
 public class SyncResult {
     public List<UUID> persisted;
     public List<TaskDto> retrieved;
+    public List<UUID> deleted;
 }

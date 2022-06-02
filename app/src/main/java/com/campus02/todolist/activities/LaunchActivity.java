@@ -32,7 +32,7 @@ public class LaunchActivity extends AppCompatActivity {
     private boolean hasUserInfo(SharedPreferences sp)
     {
         return sp.contains(Constants.PREF_USERID) &&
-                sp.getInt(Constants.PREF_USERID, 0) > 0 &&
+                sp.getInt(Constants.PREF_USERID, -1) > 0 &&
                 sp.contains(Constants.PREF_USERNAME) &&
                 !sp.getString(Constants.PREF_USERNAME, "").isEmpty();
     }

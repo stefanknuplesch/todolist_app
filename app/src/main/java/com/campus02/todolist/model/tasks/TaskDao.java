@@ -3,7 +3,9 @@ package com.campus02.todolist.model.tasks;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import java.util.List;
@@ -26,13 +28,26 @@ public interface TaskDao {
     @Update
     void update(Task... tasks);
 
+    @Delete
+    void delete(Task... tasks);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void mergeInto(List<Task> tasks);
+
+    @Transaction
     @Query("UPDATE tasks SET isDeleted = 1 WHERE id = :id")
     void markDeleted(UUID id);
 
+    @Transaction
     @Query("UPDATE tasks SET isCompleted = :completed WHERE id = :id")
     void markCompleted(UUID id, boolean completed);
 
-    @Delete
-    void delete(Task... tasks);
+    @Transaction
+    @Query("UPDATE tasks SET isSynced = 1 WHERE id in (:idList)")
+    void markSynced(List<UUID> idList);
+
+    @Transaction
+    @Query("DELETE FROM tasks WHERE id in (:idList)")
+    void deleteByIds(List<UUID> idList);
 
 }

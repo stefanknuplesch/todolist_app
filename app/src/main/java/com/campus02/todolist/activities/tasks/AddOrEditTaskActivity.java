@@ -1,6 +1,8 @@
 package com.campus02.todolist.activities.tasks;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.EditText;
@@ -11,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.campus02.todolist.R;
+import com.campus02.todolist.activities.Constants;
 import com.campus02.todolist.activities.IntentExtras;
 import com.campus02.todolist.data.AppDatabase;
 import com.campus02.todolist.model.Result;
@@ -32,8 +35,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AddOrEditTaskActivity extends AppCompatActivity {
-
-  int TEMP_USER_ID = 1;
 
   TextInputEditText txtTitle;
   TextInputEditText txtDescription;
@@ -68,37 +69,9 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       btnDelete.setEnabled(false);
     }
 
-    //TasksService tasksService = RetrofitTasksServiceBuilder.getTasksService();
     AppDatabase db = AppDatabase.getInstance(this);
 
     if (taskAlreadyExists) {
-      /*tasksService
-        .getTaskById(taskId, TEMP_USER_ID)
-        .enqueue(new Callback<Task>() {
-          @Override
-          public void onResponse(Call<Task> call, Response<Task> response) {
-            debug(req(response.raw().request()));
-            debug(response.raw().toString());
-            Result<Task> result = new Result<>(response);
-            if (result.isSuccessful()) {
-              task = result.getValue();
-              debug(task.toString());
-              populateFormFromTask(task);
-              enableForm();
-            }
-            else {
-              String errorMessage = result.getErrors().errorsWithoutPropertiesAsString();
-              Toast.makeText(AddOrEditTaskActivity.this, "Ups! Something went wrong :-(\n" + errorMessage, Toast.LENGTH_SHORT).show();
-              task = new Task();
-            }
-          }
-
-          @Override
-          public void onFailure(Call<Task> call, Throwable t) {
-            Toast.makeText(AddOrEditTaskActivity.this, "Ups! Something went wrong :-(\nFailed to load task.", Toast.LENGTH_SHORT).show();
-            task = new Task();
-          }
-        });*/
       task = db.taskDao().getById(taskId);
       if (task != null) {
         populateFormFromTask(task);
@@ -118,67 +91,14 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       disableForm();
 
       if (taskAlreadyExists) {
-        /*tasksService
-          .updateTask(taskId, TEMP_USER_ID, task)
-          .enqueue(new Callback<Task>() {
-            @Override
-            public void onResponse(Call<Task> call, Response<Task> response) {
-              debug(req(response.raw().request()));
-              debug(response.raw().toString());
-              Result<Task> result = new Result<>(response);
-              if (result.isSuccessful()) {
-                Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich aktualisiert.", Toast.LENGTH_SHORT).show();
-                finish();
-              }
-              else {
-                displayValidationErrors(result.getErrors());
-                enableForm();
-              }
-            }
-
-            @Override
-            public void onFailure(Call<Task> call, Throwable t) {
-              Toast.makeText(AddOrEditTaskActivity.this, "Fehler beim Aktualisieren der Aufgabe.", Toast.LENGTH_SHORT).show();
-              enableForm();
-            }
-          });*/
         task.setLastModifiedTimestamp(System.currentTimeMillis());
         db.taskDao().update(task);
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich aktualisiert.", Toast.LENGTH_SHORT).show();
         finish();
       }
       else {
-        /*tasksService
-          .createTask(TEMP_USER_ID, task)
-          .enqueue(new Callback<Task>() {
-            @Override
-            public void onResponse(Call<Task> call, Response<Task> response) {
-              debug(req(response.raw().request()));
-              debug(response.raw().toString());
-              Result<Task> result = new Result<>(response);
-              if (result.isSuccessful()) {
-                Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich erstellt.", Toast.LENGTH_SHORT).show();
-                enableForm();
-                cleanForm();
-                task = new Task();
-                btnDelete.setEnabled(false);
-              }
-              else {
-                displayValidationErrors(result.getErrors());
-                enableForm();
-                btnDelete.setEnabled(false);
-              }
-            }
-
-            @Override
-            public void onFailure(Call<Task> call, Throwable t) {
-              Toast.makeText(AddOrEditTaskActivity.this, "Fehler beim Erstellen der Aufgabe.", Toast.LENGTH_SHORT).show();
-              enableForm();
-              btnDelete.setEnabled(false);
-            }
-          });*/
         task.setId(UUID.randomUUID());
-        task.setOriginatorUserId(TEMP_USER_ID);
+        task.setOriginatorUserId(getCurrentUserId());
         task.setLastModifiedTimestamp(System.currentTimeMillis());
         db.taskDao().insert(task);
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich erstellt.", Toast.LENGTH_SHORT).show();
@@ -196,26 +116,6 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       alert.setTitle("Aufgabe löschen");
       alert.setMessage("Soll die Aufgabe wirklich gelöscht werden?");
       alert.setPositiveButton("Ja", (dialog, which) -> {
-        /*tasksService.deleteTask(taskId, TEMP_USER_ID).enqueue(new Callback<Task>() {
-          @Override
-          public void onResponse(Call<Task> call, Response<Task> response) {
-            debug(req(response.raw().request()));
-            debug(response.raw().toString());
-            Result<Task> result = new Result<>(response);
-            if (result.isSuccessful()) {
-              Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich gelöscht", Toast.LENGTH_SHORT).show();
-              finish();
-            }
-            else {
-              displayValidationErrors(result.getErrors());
-              enableForm();
-            }
-          }
-          @Override
-          public void onFailure(Call<Task> call, Throwable t) {
-            Toast.makeText(AddOrEditTaskActivity.this, "Fehler beim Löschen der Aufgabe.", Toast.LENGTH_SHORT).show();
-            enableForm();
-          }*/
         db.taskDao().markDeleted(task.getId());
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich gelöscht", Toast.LENGTH_SHORT).show();
         finish();
@@ -299,9 +199,10 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
     txtTitle.requestFocus();
   }
 
+  @SuppressLint("NonConstantResourceId")
   private boolean getIsPublicValue() {
     int selectedId = rgIsPublic.getCheckedRadioButtonId();
-    switch(selectedId) {
+    switch (selectedId) {
       case R.id.rbPublic:
         return true;
       default:
@@ -314,5 +215,10 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       return R.id.rbPublic;
     else
       return R.id.rbPrivate;
+  }
+
+  private Integer getCurrentUserId() {
+    SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
+    return sp.getInt(Constants.PREF_USERID, -1);
   }
 }

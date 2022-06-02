@@ -1,22 +1,19 @@
 package com.campus02.todolist.model.tasks;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.campus02.todolist.data.AppDatabase;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import okhttp3.MediaType;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,24 +28,24 @@ public class TaskManager {
         this.service = service;
     }
 
-    public void fetchTasks (Integer userId) {
+    public void syncTasks(Context context, Integer userId) {
         service.fetchTasks(userId).enqueue(new Callback<List<FetchTaskInfo>>() {
             @Override
             public void onResponse(Call<List<FetchTaskInfo>> call, Response<List<FetchTaskInfo>> response) {
-                Log.d("TASK_SYNC", Arrays.toString(response.body().toArray()));
-                processFetchResponse(response.body(), userId);
+                // TODO: isSuccessful?
+                processFetchResponse(context, response.body(), userId);
             }
             @Override
             public void onFailure(Call<List<FetchTaskInfo>> call, Throwable t) {
-                Log.e("TASK_SYNC", t.getMessage());
+                // TODO: errorhandling
             }
         });
     }
 
-    public void processFetchResponse (List<FetchTaskInfo> fetchResponse, Integer userId) {
-        List<Task> dbTaskList = getDao().getAll(userId, true);
+    public void processFetchResponse (Context context, List<FetchTaskInfo> fetchResponse, Integer userId) {
+        List<Task> dbTaskList = getDao().getAll(userId,true);
         SyncRequest syncRequest = new SyncRequest();
-        List<UUID> deleteLocal = new ArrayList<>(); // TODO: implement
+        List<UUID> deleteLocal = new ArrayList<>();
     /*
     Case 1: He has no entry for that id in his local database. Action: he needs to insert the entry in his database.
     Case 2: He has entry for that id in his local database. Action: Checks the timestamp,
@@ -71,7 +68,7 @@ public class TaskManager {
                 syncRequest.addToPersist(TaskDto.from(localTask));
             }
             // Case 2b -> lokalen eintrag updaten
-            else if (localTask.getLastModifiedTimestamp() <= fti.lastModifiedTimestamp && !localTask.isDeleted()) {
+            else if (localTask.getLastModifiedTimestamp() < fti.lastModifiedTimestamp && !localTask.isDeleted()) {
                 syncRequest.addToRetrieve(fti.id); // request full task!
             }
         }
@@ -101,15 +98,38 @@ public class TaskManager {
         service.syncTasks(userId, syncRequest).enqueue(new Callback<SyncResult>() {
             @Override
             public void onResponse(Call<SyncResult> call, Response<SyncResult> response) {
-                // TODO
                 Log.d("TASK_MANAGER_JSON_FROM_DB", gson.toJson(response.body()));
-            }
+                // TODO: isSuccessful?
+                SyncResult res = response.body();
 
+                // 1) Daten vom Server in die lokale DB einfügen
+                appDatabase.taskDao().mergeInto(res.retrieved.stream().map(TaskDto::toSync).collect(Collectors.toList()));
+
+                // 2) Am Server eingefügte Daten auf sync=true setzen
+                appDatabase.taskDao().markSynced(res.persisted);
+
+                // 3) Am Server gelöschte Daten und lokal übriggebliebene endgültig löschen
+                appDatabase.taskDao().deleteByIds(Stream.concat(res.deleted.stream(), deleteLocal.stream()).collect(Collectors.toList()));
+
+                Toast.makeText(context, "Daten wurden erfolgreich synchronisiert", Toast.LENGTH_LONG).show();
+
+            }
             @Override
             public void onFailure(Call<SyncResult> call, Throwable t) {
-                // TODO
+                // TODO errorhandling
             }
         });
+    }
+
+    private void handleRetrieved(List<TaskDto> list) {
+        List<Task> tasks = list.stream().map(TaskDto::toSync).collect(Collectors.toList());
+        this.appDatabase.taskDao().mergeInto(list.stream().map(TaskDto::toSync).collect(Collectors.toList()));
+    }
+    private void handlePersisted(List<UUID> list) {
+        this.appDatabase.taskDao().markSynced(list);
+    }
+    private void handleDeleted(List<UUID> list) {
+        this.appDatabase.taskDao().deleteByIds(list);
     }
 
     public TaskDao getDao() { return appDatabase.taskDao(); }

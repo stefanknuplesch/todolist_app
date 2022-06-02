@@ -43,8 +43,6 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         taskManager = new TaskManager(AppDatabase.getInstance(this), RetrofitTasksServiceBuilder.getTasksService());
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
         userId = sharedPreferences.getInt(Constants.PREF_USERID, -1);
-
-        taskManager.fetchTasks(userId);
     }
 
     @Override
@@ -58,7 +56,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.optSynchronize:
-                // TODO: synchronisieren per Button
+                taskManager.syncTasks(this, userId);
                 return true;
             case R.id.optLogout:
                 doLogout();
@@ -100,51 +98,8 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     }
 
     private void populateTasksFromDatabase() {
-        /*TasksService tasksService = RetrofitTasksServiceBuilder.getTasksService();
-
-        tasksService.getTaskOverview(TEMP_USER_ID).enqueue(new Callback<List<Task>>() {
-            @Override
-            public void onResponse(Call<List<Task>> call, Response<List<Task>> response) {
-                createAndSetTaskAdapter(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<List<Task>> call, Throwable t) {
-                Toast.makeText(ShowAllTasksActivity.this, "Fehler beim Laden der Tasks.", Toast.LENGTH_SHORT).show();
-                createAndSetTaskAdapter(new ArrayList<>());
-            }
-
-            private void createAndSetTaskAdapter(List<Task> tasks) {
-                Collections.sort(tasks);
-                TaskAdapter taskAdapter = new TaskAdapter(tasks);
-                taskAdapter.setCallback((task, isChecked) -> {
-                    task.setCompleted(isChecked);
-                    tasksService
-                            .updateTaskStatus(task.getId(), task.isCompleted(), TEMP_USER_ID)
-                            .enqueue(new Callback<Task>() {
-                                @Override
-                                public void onResponse(Call<Task> call, Response<Task> response) {
-                                    android.util.Log.d("ShowAllTasks", response.raw().toString());
-                                    Result<Task> result = new Result<>(response);
-                                    if (result.isSuccessful()) {
-                                        Toast.makeText(ShowAllTasksActivity.this, "Aufgabe wurde erfolgreich aktualisiert.", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else {
-                                        Toast.makeText(ShowAllTasksActivity.this, "Fehler beim Aktualisieren der Aufgabe.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                @Override
-                                public void onFailure(Call<Task> call, Throwable t) {
-                                    Toast.makeText(ShowAllTasksActivity.this, "Fehler beim Aktualisieren der Aufgabe.", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                });
-                rvTasks.setAdapter(taskAdapter);
-            }
-        });*/
         List<Task> tasks = taskManager.getDao().getAll(userId, false);
         createAndSetTaskAdapter(tasks);
-
     }
     private void createAndSetTaskAdapter(List<Task> tasks) {
         Collections.sort(tasks);

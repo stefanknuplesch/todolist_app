@@ -49,6 +49,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 public void onResponse(Call<User> call, Response<User> response) {
                     android.util.Log.d("RegistrationActivity", response.raw().toString());
                     Result<User> result = new Result<>(response);
+                    // TODO issuccessful handling
                     if (result.isSuccessful() && result.getValue().getId() != null) {
                         Toast.makeText(RegistrationActivity.this, "Benutzer erfolgreich registriert", Toast.LENGTH_SHORT).show();
                         finish();

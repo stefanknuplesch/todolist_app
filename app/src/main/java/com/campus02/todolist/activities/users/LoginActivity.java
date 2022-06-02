@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     Result<User> result = new Result<>(response);
+                    // TODO issuccessful handling
                     if (result.isSuccessful() && result.getValue().getId() != null) {
                         User user = result.getValue();
                         Toast.makeText(LoginActivity.this, "Login erfolgreich\nWillkommen " + user.getName(), Toast.LENGTH_SHORT).show();

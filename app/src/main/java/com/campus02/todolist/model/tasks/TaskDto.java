@@ -36,4 +36,18 @@ public class TaskDto {
 
         return result;
     }
+
+    public static Task toSync(TaskDto dto) {
+        Task result = new Task();
+        result.setId(dto.id);
+        result.setTitle(dto.title);
+        result.setDescription(dto.description);
+        result.setPublic(dto.isPublic);
+        result.setCompleted(dto.isCompleted);
+        result.setLastModifiedTimestamp(dto.lastModifiedTimestamp);
+        result.setOriginatorUserId(dto.originatorUserId);
+        result.setSynced(true);
+
+        return result;
+    }
 }
