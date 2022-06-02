@@ -2,6 +2,7 @@ package com.campus02.todolist.activities.users;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 
@@ -58,11 +59,13 @@ public class RegistrationActivity extends AppCompatActivity {
                         finish();
                     }
                     else {
+                        Log.e("REGISTRATION_ACTIVITY", result.getError().toString());
                         Toast.makeText(RegistrationActivity.this, "Fehler:\n" + result.getError().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
                 @Override
                 public void onFailure(Call<UserDto> call, Throwable t) {
+                    Log.e("REGISTRATION_ACTIVITY", t.getMessage());
                     Toast.makeText(RegistrationActivity.this, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
                 }
             });

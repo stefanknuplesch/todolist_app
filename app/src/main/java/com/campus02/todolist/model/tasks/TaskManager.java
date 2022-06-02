@@ -4,10 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.campus02.todolist.activities.users.RegistrationActivity;
 import com.campus02.todolist.data.AppDatabase;
 import com.campus02.todolist.model.Result;
-import com.campus02.todolist.model.users.UserDto;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -39,11 +37,13 @@ public class TaskManager {
                     processFetchResponse(context, response.body(), userId);
                 }
                 else {
+                    Log.e("TASK_MANAGER_FETCH", result.getError().toString());
                     Toast.makeText(context, "Fehler beim Synchronisieren:\n" + result.getError().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(Call<List<FetchTaskInfo>> call, Throwable t) {
+                Log.e("TASK_MANAGER_FETCH", t.getMessage());
                 Toast.makeText(context, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
             }
         });
@@ -53,16 +53,10 @@ public class TaskManager {
         List<Task> dbTaskList = getDao().getAll(userId,true);
         SyncRequest syncRequest = new SyncRequest();
         List<UUID> deleteLocal = new ArrayList<>();
-    /*
-    Case 1: He has no entry for that id in his local database. Action: he needs to insert the entry in his database.
-    Case 2: He has entry for that id in his local database. Action: Checks the timestamp,
-            if it is newer than the server we will update the server entry otherwise we will update the local entry.
-    Case 3: Mark has some ids in his database that are missing in the fetch.json.
-            Action: Checks the flag ’synced’ if it is false this means the entry was created offline and we need to add it to our server,
-                    if synced us true means the entry was deleted and Mark need to delete it locally too.
-     */
+
         //
         // Schritt 1 --> Ermitteln der zu synchronisierenden Aufgaben:
+        // Geht sicher schöner :S
         //
         for (FetchTaskInfo fti : fetchResponse) {
             Task localTask = dbTaskList.stream().filter(task -> task.getId().equals(fti.id)).findAny().orElse(null);
@@ -99,7 +93,6 @@ public class TaskManager {
         //
         // Schritt 2 --> Sync Request absetzen
         //
-
         Gson gson = new Gson();
         Log.d("TASK_MANAGER_JSON_TO_DB", gson.toJson(syncRequest));
         service.syncTasks(userId, syncRequest).enqueue(new Callback<SyncResult>() {
@@ -122,11 +115,13 @@ public class TaskManager {
                     Toast.makeText(context, "Daten wurden erfolgreich synchronisiert!", Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    Log.e("TASK_MANAGER_SYNC", result.getError().toString());
                     Toast.makeText(context, "Fehler:\n" + result.getError().getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
             @Override
             public void onFailure(Call<SyncResult> call, Throwable t) {
+                Log.e("TASK_MANAGER_SYNC", t.getMessage());
                 Toast.makeText(context, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
             }
         });

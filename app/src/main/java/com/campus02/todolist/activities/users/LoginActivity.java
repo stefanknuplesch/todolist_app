@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 
@@ -74,12 +75,14 @@ public class LoginActivity extends AppCompatActivity {
                         processLogin(result.getValue());
                     }
                     else {
+                        Log.e("LOGIN_ACTIVITY", result.getError().toString());
                         Toast.makeText(LoginActivity.this, "Fehler:\n" + result.getError().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UserDto> call, Throwable t) {
+                    Log.e("LOGIN_ACTIVITY", t.getMessage());
                     Toast.makeText(LoginActivity.this, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
                 }
             });
