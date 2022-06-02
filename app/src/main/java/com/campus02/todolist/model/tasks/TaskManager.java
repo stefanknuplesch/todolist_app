@@ -111,8 +111,7 @@ public class TaskManager {
                 // 3) Am Server gelöschte Daten und lokal übriggebliebene endgültig löschen
                 appDatabase.taskDao().deleteByIds(Stream.concat(res.deleted.stream(), deleteLocal.stream()).collect(Collectors.toList()));
 
-                Toast.makeText(context, "Daten wurden erfolgreich synchronisiert", Toast.LENGTH_LONG).show();
-
+                Toast.makeText(context, "Daten wurden erfolgreich synchronisiert", Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onFailure(Call<SyncResult> call, Throwable t) {
