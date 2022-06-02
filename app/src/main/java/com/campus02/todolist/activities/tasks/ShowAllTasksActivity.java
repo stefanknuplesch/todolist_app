@@ -114,9 +114,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
 
     private void createAndSetTaskAdapter(List<Task> tasks) {
         adapter = new TaskAdapter(tasks);
-        adapter.setCallback((task, isChecked) -> {
-            taskManager.getDao().markCompleted(task.getId(), isChecked, System.currentTimeMillis());
-        });
+        adapter.setCallback((task, isChecked) -> taskManager.getDao().markCompleted(task.getId(), isChecked, System.currentTimeMillis()));
         rvTasks.setAdapter(adapter);
     }
 
