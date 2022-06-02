@@ -66,6 +66,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
         populateFormFromTask(task);
         enableForm();
         enableOrDisableRadioGroup(rgIsPublic, task.getOriginatorUserId().equals(getCurrentUserId()));
+        btnDelete.setEnabled(!task.isPublic() || task.getOriginatorUserId().equals(getCurrentUserId()));
       }
       else {
         task = new Task();

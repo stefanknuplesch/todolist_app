@@ -1,17 +1,14 @@
 package com.campus02.todolist.activities.tasks;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Typeface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.campus02.todolist.R;
@@ -70,6 +67,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     this.callback = callback;
   }
 
+  @SuppressLint("NotifyDataSetChanged")
   public void refreshTaskList(List<Task> list) {
     tasks.clear();
     tasks.addAll(list);
