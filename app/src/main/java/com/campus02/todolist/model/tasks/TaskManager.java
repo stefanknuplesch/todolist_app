@@ -8,7 +8,6 @@ import com.campus02.todolist.data.AppDatabase;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

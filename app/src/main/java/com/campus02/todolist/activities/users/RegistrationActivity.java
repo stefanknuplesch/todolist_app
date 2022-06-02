@@ -11,6 +11,7 @@ import com.campus02.todolist.R;
 import com.campus02.todolist.model.Result;
 import com.campus02.todolist.model.users.RetrofitUsersServiceBuilder;
 import com.campus02.todolist.model.users.User;
+import com.campus02.todolist.model.users.UserDto;
 import com.campus02.todolist.model.users.UsersService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -48,10 +49,10 @@ public class RegistrationActivity extends AppCompatActivity {
             newUser.setEmail(etEmail.getText().toString());
             newUser.setPassword(etPassword.getText().toString());
 
-            usersService.registerUser(newUser).enqueue(new Callback<User>() {
+            usersService.registerUser(newUser).enqueue(new Callback<UserDto>() {
                 @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    Result<User> result = new Result<>(response);
+                public void onResponse(Call<UserDto> call, Response<UserDto> response) {
+                    Result<UserDto> result = new Result<>(response);
                     // TODO issuccessful handling
                     if (result.isSuccessful() && result.getValue().getId() != null) {
                         Toast.makeText(RegistrationActivity.this, "Benutzer erfolgreich registriert", Toast.LENGTH_SHORT).show();
@@ -63,7 +64,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     }
                 }
                 @Override
-                public void onFailure(Call<User> call, Throwable t) {
+                public void onFailure(Call<UserDto> call, Throwable t) {
                     Toast.makeText(RegistrationActivity.this, "Fehler beim Registrieren.", Toast.LENGTH_SHORT).show();
                 }
             });
@@ -79,7 +80,7 @@ public class RegistrationActivity extends AppCompatActivity {
             etEmail.setError("Bitte geben Sie eine gültige E-Mail Adresse ein!");
             return false;
         }
-        if (etPassword.length() <= 8) {
+        if (etPassword.length() < 8) {
             etPassword.setError("Bitte geben Sie ein Passwort ein (min. 8 Zeichen)");
             return false;
         }

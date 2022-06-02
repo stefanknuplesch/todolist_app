@@ -15,6 +15,7 @@ import com.campus02.todolist.R;
 import com.campus02.todolist.activities.Constants;
 import com.campus02.todolist.activities.tasks.ShowAllTasksActivity;
 import com.campus02.todolist.model.Result;
+import com.campus02.todolist.model.users.UserDto;
 import com.campus02.todolist.model.users.RetrofitUsersServiceBuilder;
 import com.campus02.todolist.model.users.User;
 import com.campus02.todolist.model.users.UsersService;
@@ -63,13 +64,13 @@ public class LoginActivity extends AppCompatActivity {
             loginUser.setEmail(etEmail.getText().toString());
             loginUser.setPassword(etPassword.getText().toString());
 
-            usersService.loginUser(loginUser).enqueue(new Callback<User>() {
+            usersService.loginUser(loginUser).enqueue(new Callback<UserDto>() {
                 @Override
-                public void onResponse(Call<User> call, Response<User> response) {
-                    Result<User> result = new Result<>(response);
+                public void onResponse(Call<UserDto> call, Response<UserDto> response) {
+                    Result<UserDto> result = new Result<>(response);
                     // TODO issuccessful handling
                     if (result.isSuccessful() && result.getValue().getId() != null) {
-                        User user = result.getValue();
+                        UserDto user = result.getValue();
                         Toast.makeText(LoginActivity.this, "Login erfolgreich\nWillkommen " + user.getName(), Toast.LENGTH_SHORT).show();
                         sharedPreferences.edit().putInt(Constants.PREF_USERID, user.getId()).apply();
                         sharedPreferences.edit().putString(Constants.PREF_USERNAME, user.getName()).apply();
@@ -84,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<User> call, Throwable t) {
+                public void onFailure(Call<UserDto> call, Throwable t) {
                     Toast.makeText(LoginActivity.this, "Fehler beim Einloggen.", Toast.LENGTH_SHORT).show();
                 }
             });

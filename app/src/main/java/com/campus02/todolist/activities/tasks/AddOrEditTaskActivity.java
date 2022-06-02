@@ -1,10 +1,8 @@
 package com.campus02.todolist.activities.tasks;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.InputType;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -17,23 +15,12 @@ import com.campus02.todolist.R;
 import com.campus02.todolist.activities.Constants;
 import com.campus02.todolist.activities.IntentExtras;
 import com.campus02.todolist.data.AppDatabase;
-import com.campus02.todolist.model.Result;
-import com.campus02.todolist.model.ValidationErrors;
-import com.campus02.todolist.model.tasks.RetrofitTasksServiceBuilder;
 import com.campus02.todolist.model.tasks.Task;
-import com.campus02.todolist.model.tasks.TasksService;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.IOException;
 import java.util.UUID;
-
-import okhttp3.Request;
-import okio.Buffer;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class AddOrEditTaskActivity extends AppCompatActivity {
 

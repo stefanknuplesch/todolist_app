@@ -23,7 +23,7 @@ public class Result<T> {
         else {
             try {
                 Gson gson = new GsonBuilder().create();
-                Type listType = new TypeToken<ArrayList<ValidationError>>(){}.getType();
+                Type listType = new TypeToken<ArrayList<ValidationErrors>>(){}.getType();
                 List<ValidationError> errorsFromResponse = gson.fromJson(response.errorBody().string(), listType);
 
                 errors = new ValidationErrors(errorsFromResponse);
