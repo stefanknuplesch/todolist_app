@@ -1,14 +1,10 @@
 package com.campus02.todolist.activities.tasks;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.campus02.todolist.R;
@@ -39,7 +35,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     Task task = tasks.get(position);
     holder.task.setText(task.getTitle());
     holder.completed.setChecked(task.isCompleted());
-    setTextStyle(holder.task, task);
+    holder.task.setTextAppearance(getTextAppearance(task.isCompleted(), task.isPublic()));
     holder.itemView.setTag(task.getId());
     holder.itemView.setOnClickListener(itemView -> {
       UUID taskId = (UUID)itemView.getTag();
@@ -49,9 +45,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     });
     holder.completed.setOnCheckedChangeListener((cb, isChecked) -> {
       if (callback != null) {
-        callback.onCheckedChanged(task, isChecked);
+        callback.onCheckedChanged(cb, isChecked);
+        notifyItemChanged(position, getTextAppearance(isChecked, tasks.get(position).isPublic()));
       }
     });
+  }
+
+  @Override
+  public void onBindViewHolder(TaskHolder holder, int position, List<Object> payloads) {
+    if(!payloads.isEmpty()) {
+      if (payloads.get(0) instanceof Integer) {
+        holder.task.setTextAppearance((Integer) payloads.get(0));
+      }
+    }
+    else {
+      super.onBindViewHolder(holder, position, payloads);
+    }
   }
 
   @Override
@@ -60,33 +69,29 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
   }
 
   public interface Callback {
-    void onCheckedChanged(Task task, boolean isChecked);
+    void onCheckedChanged(View view, boolean isChecked);
   }
 
   public void setCallback(Callback callback) {
     this.callback = callback;
   }
 
-  private void setTextStyle (TextView tv, Task task) {
-    if (task.isPublic()) {
-      if (task.isCompleted()) {
-        tv.setTextColor(ContextCompat.getColor(tv.getContext(), R.color.completedPublicTaskColor));
-        tv.setTypeface(tv.getTypeface(), Typeface.ITALIC);
+  private Integer getTextAppearance (boolean isCompleted, boolean isPublic) {
+    if (isPublic) {
+      if (isCompleted) {
+        return R.style.isPublicAndCompleted;
       }
       else {
-        tv.setTextColor(ContextCompat.getColor(tv.getContext(), R.color.publicTaskColor));
-        tv.setTypeface(null, Typeface.BOLD);
+        return R.style.isPublicAndNotCompleted;
       }
     }
     else
     {
-      if (task.isCompleted()) {
-        tv.setTextColor(ContextCompat.getColor(tv.getContext(), R.color.completedTaskColor));
-        tv.setTypeface(tv.getTypeface(), Typeface.ITALIC);
+      if (isCompleted) {
+        return R.style.isCompleted;
       }
       else {
-        tv.setTextColor(ContextCompat.getColor(tv.getContext(), R.color.dark));
-        tv.setTypeface(null, Typeface.BOLD);
+        return R.style.isNotCompleted;
       }
     }
   }

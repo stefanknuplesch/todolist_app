@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.campus02.todolist.activities.tasks.TaskAdapter;
 import com.campus02.todolist.data.AppDatabase;
 import com.campus02.todolist.model.Result;
 import com.google.gson.Gson;
@@ -148,7 +147,5 @@ public class TaskManager {
     public void setSyncCompletedCallback(SyncCompletedCallback cb) {
         this.syncCompletedCallback = cb;
     }
-
-
 
 }

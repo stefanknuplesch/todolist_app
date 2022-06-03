@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="isCompleted" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@color/completedTaskColor</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+    <style name="isNotCompleted" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@color/dark</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="isPublicAndCompleted" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@color/completedPublicTaskColor</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+    <style name="isPublicAndNotCompleted" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">@color/publicTaskColor</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>
