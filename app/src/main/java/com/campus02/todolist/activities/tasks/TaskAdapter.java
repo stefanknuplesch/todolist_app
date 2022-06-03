@@ -67,13 +67,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskHolder> {
     this.callback = callback;
   }
 
-  @SuppressLint("NotifyDataSetChanged")
-  public void refreshTaskList(List<Task> list) {
-    tasks.clear();
-    tasks.addAll(list);
-    this.notifyDataSetChanged();
-  }
-
   private void setTextStyle (TextView tv, Task task) {
     if (task.isPublic()) {
       if (task.isCompleted()) {
