@@ -12,6 +12,7 @@ public class SyncRequest {
     public void addToRetrieve(UUID item) {
         toRetrieve.add(item);
     }
+    public void addAllToRetrieve (List<UUID> items) { toRetrieve.addAll(items); }
     public void addToPersist(TaskDto item) {
         toPersist.add(item);
     }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.campus02.todolist.data.AppDatabase;
 import com.campus02.todolist.model.Result;
 import com.google.gson.Gson;
@@ -53,6 +55,7 @@ public class TaskManager {
     public void processFetchResponse (Context context, List<FetchTaskInfo> fetchResponse, Integer userId) {
         List<Task> dbTaskList = getDao().getAll(userId,true);
         SyncRequest syncRequest = new SyncRequest();
+        List<UUID> collisionUuids = new ArrayList<>();
         List<UUID> deleteLocal = new ArrayList<>();
 
         //
@@ -71,7 +74,7 @@ public class TaskManager {
             }
             // Case 2b -> lokalen eintrag updaten
             else if (localTask.getLastModifiedTimestamp() < fti.lastModifiedTimestamp && !localTask.isDeleted()) {
-                syncRequest.addToRetrieve(fti.id); // request full task!
+                collisionUuids.add(fti.id); // request full task if user wants to overwrite!
             }
         }
 
@@ -90,10 +93,35 @@ public class TaskManager {
                 }
             }
         }
+        if (collisionUuids.isEmpty()) {
+            doSyncRequest(context, syncRequest, userId, deleteLocal);
+        }
+        // Kollisionen vorhanden? User fragen
+        else {
+            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+            alert.setTitle("Synchronisierung");
+            alert.setMessage("Der Server verfügt im Vergleich zur lokalen Datenbank über aktuellere Daten.\n" +
+                    "Sollen die betroffenen lokalen Daten überschrieben werden?");
+            alert.setPositiveButton("Überschreiben", (dialog, which) -> {
+                syncRequest.addAllToRetrieve(collisionUuids);
+                doSyncRequest(context, syncRequest, userId, deleteLocal);
+            });
+            alert.setNegativeButton("Behalten", (dialog, which)
+                    -> doSyncRequest(context, syncRequest, userId, deleteLocal));
+            alert.setNeutralButton("Abbrechen", (dialog, which) -> dialog.cancel());
+            alert.show();
+        }
+    }
+    public TaskDao getDao() { return appDatabase.taskDao(); }
 
-        //
-        // Schritt 2 --> Sync Request absetzen
-        //
+    public interface SyncCompletedCallback {
+        void invoke();
+    }
+    public void setSyncCompletedCallback(SyncCompletedCallback cb) {
+        this.syncCompletedCallback = cb;
+    }
+
+    private void doSyncRequest(Context context, SyncRequest syncRequest, Integer userId, List<UUID> deleteLocal) {
         Gson gson = new Gson();
         Log.d("TASK_MANAGER_JSON_TO_DB", gson.toJson(syncRequest));
         service.syncTasks(userId, syncRequest).enqueue(new Callback<SyncResult>() {
@@ -115,8 +143,7 @@ public class TaskManager {
 
                     syncCompletedCallback.invoke();
                     Toast.makeText(context, "Daten wurden erfolgreich synchronisiert!", Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     Log.e("TASK_MANAGER_SYNC", result.getError().toString());
                     Toast.makeText(context, "Fehler:\n" + result.getError().getMessage(), Toast.LENGTH_LONG).show();
                 }
@@ -127,25 +154,6 @@ public class TaskManager {
                 Toast.makeText(context, "Verbindung fehlgeschlagen: Möglicherweise ist der Server nicht erreichbar, versuchen Sie es später erneut.", Toast.LENGTH_LONG).show();
             }
         });
-    }
-    private void handleRetrieved(List<TaskDto> list) {
-        List<Task> tasks = list.stream().map(TaskDto::toSync).collect(Collectors.toList());
-        this.appDatabase.taskDao().mergeInto(list.stream().map(TaskDto::toSync).collect(Collectors.toList()));
-    }
-    private void handlePersisted(List<UUID> list) {
-        this.appDatabase.taskDao().markSynced(list);
-    }
-    private void handleDeleted(List<UUID> list) {
-        this.appDatabase.taskDao().deleteByIds(list);
-    }
-
-    public TaskDao getDao() { return appDatabase.taskDao(); }
-
-    public interface SyncCompletedCallback {
-        void invoke();
-    }
-    public void setSyncCompletedCallback(SyncCompletedCallback cb) {
-        this.syncCompletedCallback = cb;
     }
 
 }
