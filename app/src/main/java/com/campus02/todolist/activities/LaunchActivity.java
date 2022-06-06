@@ -36,7 +36,7 @@ public class LaunchActivity extends AppCompatActivity {
         handler.postDelayed(() -> {
             startActivity(activityIntent);
             finish();
-        },3000);
+        },2000);
     }
 
     private boolean hasUserInfo(SharedPreferences sp)
