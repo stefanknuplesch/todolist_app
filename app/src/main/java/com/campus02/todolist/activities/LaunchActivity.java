@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatDelegate;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 
+import com.campus02.todolist.R;
 import com.campus02.todolist.activities.tasks.ShowAllTasksActivity;
 import com.campus02.todolist.activities.users.LoginActivity;
 
@@ -17,6 +19,8 @@ public class LaunchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        setContentView(R.layout.activity_launch);
+        getSupportActionBar().hide();
 
         Intent activityIntent;
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
@@ -27,8 +31,12 @@ public class LaunchActivity extends AppCompatActivity {
         else {
             activityIntent = new Intent(this, LoginActivity.class);
         }
-        startActivity(activityIntent);
-        finish();
+
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            startActivity(activityIntent);
+            finish();
+        },3000);
     }
 
     private boolean hasUserInfo(SharedPreferences sp)
