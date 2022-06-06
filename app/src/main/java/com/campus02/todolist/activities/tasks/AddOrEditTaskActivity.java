@@ -58,7 +58,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       btnDelete.setEnabled(false);
     }
 
-    AppDatabase db = AppDatabase.getInstance(this);
+    AppDatabase db = AppDatabase.getInstance(this, getCurrentUserId());
 
     if (taskAlreadyExists) {
       task = db.taskDao().getById(taskId);

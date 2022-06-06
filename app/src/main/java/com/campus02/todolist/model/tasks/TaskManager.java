@@ -53,7 +53,7 @@ public class TaskManager {
     }
 
     public void processFetchResponse (Context context, List<FetchTaskInfo> fetchResponse, Integer userId) {
-        List<Task> dbTaskList = getDao().getAll(userId,true);
+        List<Task> localDbTaskList = getDao().getAll(true);
         SyncRequest syncRequest = new SyncRequest();
         List<UUID> collisionUuids = new ArrayList<>();
         List<UUID> deleteLocal = new ArrayList<>();
@@ -63,7 +63,7 @@ public class TaskManager {
         // Geht sicher schöner :S
         //
         for (FetchTaskInfo fti : fetchResponse) {
-            Task localTask = dbTaskList.stream().filter(task -> task.getId().equals(fti.id)).findAny().orElse(null);
+            Task localTask = localDbTaskList.stream().filter(task -> task.getId().equals(fti.id)).findAny().orElse(null);
             // Case 1 -> lokalen eintrag erstellen
             if (localTask == null) {
                 syncRequest.addToRetrieve(fti.id); // request full task!
@@ -78,7 +78,7 @@ public class TaskManager {
             }
         }
 
-        for (Task localTask : dbTaskList) {
+        for (Task localTask : localDbTaskList) {
             if (localTask.isDeleted()) {
                 syncRequest.addToDelete(localTask.getId()); // lokalen Eintrag und am Server löschen
             }

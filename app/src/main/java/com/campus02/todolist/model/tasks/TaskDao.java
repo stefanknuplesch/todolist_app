@@ -15,9 +15,8 @@ import java.util.UUID;
 public interface TaskDao {
     @Query("SELECT * " +
             " FROM tasks " +
-            "WHERE (originatorUserId = :userId OR isPublic = 1)" +
-            "  AND (isDeleted = :includeDeleted OR :includeDeleted = 1)")
-    List<Task> getAll(int userId, boolean includeDeleted);
+            "WHERE (isDeleted = :includeDeleted OR :includeDeleted = 1)")
+    List<Task> getAll(boolean includeDeleted);
 
     @Query("SELECT * FROM Tasks WHERE id = :id")
     Task getById(UUID id);

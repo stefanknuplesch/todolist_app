@@ -43,12 +43,12 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         rvTasks.setLayoutManager(new LinearLayoutManager(this));
         initializeComponents();
 
-        taskManager = new TaskManager(AppDatabase.getInstance(this), RetrofitTasksServiceBuilder.getTasksService());
-        taskManager.setSyncCompletedCallback(() -> createAndSetTaskAdapter(retrieveTasksFromLocalDb()));
-
         sharedPreferences = getSharedPreferences(Constants.SHARED_PREF, MODE_PRIVATE);
         userId = sharedPreferences.getInt(Constants.PREF_USERID, -1);
         userName = sharedPreferences.getString(Constants.PREF_USERNAME, "");
+
+        taskManager = new TaskManager(AppDatabase.getInstance(this, userId), RetrofitTasksServiceBuilder.getTasksService());
+        taskManager.setSyncCompletedCallback(() -> createAndSetTaskAdapter(retrieveTasksFromLocalDb()));
     }
 
     @Override
@@ -77,6 +77,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         String loggedOutUsername = sharedPreferences.getString(Constants.PREF_USERNAME, "");
         sharedPreferences.edit().remove(Constants.PREF_USERID).apply();
         sharedPreferences.edit().remove(Constants.PREF_USERNAME).apply();
+        AppDatabase.destroyInstance();
 
         if (!loggedOutUsername.isEmpty()) {
             Toast.makeText(this, loggedOutUsername + " wurde erfolgreich ausgeloggt.", Toast.LENGTH_SHORT).show();
@@ -105,7 +106,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
     }
 
     private List<Task> retrieveTasksFromLocalDb () {
-        return taskManager.getDao().getAll(userId, false)
+        return taskManager.getDao().getAll(false)
                 .stream()
                 .sorted()
                 .collect(Collectors.toList());
