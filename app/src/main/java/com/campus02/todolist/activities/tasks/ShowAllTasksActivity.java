@@ -47,7 +47,7 @@ public class ShowAllTasksActivity extends AppCompatActivity {
         userId = sharedPreferences.getInt(Constants.PREF_USERID, -1);
         userName = sharedPreferences.getString(Constants.PREF_USERNAME, "");
 
-        taskManager = new TaskManager(AppDatabase.getInstance(this, userId), RetrofitTasksServiceBuilder.getTasksService());
+        taskManager = new TaskManager(AppDatabase.getInstance(this, userId));
         taskManager.setSyncCompletedCallback(() -> createAndSetTaskAdapter(retrieveTasksFromLocalDb()));
     }
 

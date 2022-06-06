@@ -25,10 +25,14 @@ public class TaskManager {
     private final TasksService service;
     private SyncCompletedCallback syncCompletedCallback;
 
-    public TaskManager(AppDatabase appDatabase, TasksService service)
+    public interface SyncCompletedCallback {
+        void invoke();
+    }
+
+    public TaskManager(AppDatabase appDatabase)
     {
         this.appDatabase = appDatabase;
-        this.service = service;
+        this.service = RetrofitTasksServiceBuilder.getTasksService();
     }
 
     public void syncTasks(Context context, Integer userId) {
@@ -114,9 +118,6 @@ public class TaskManager {
     }
     public TaskDao getDao() { return appDatabase.taskDao(); }
 
-    public interface SyncCompletedCallback {
-        void invoke();
-    }
     public void setSyncCompletedCallback(SyncCompletedCallback cb) {
         this.syncCompletedCallback = cb;
     }

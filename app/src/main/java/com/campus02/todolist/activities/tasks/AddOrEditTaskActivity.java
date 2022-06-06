@@ -16,6 +16,7 @@ import com.campus02.todolist.activities.Constants;
 import com.campus02.todolist.activities.IntentExtras;
 import com.campus02.todolist.data.AppDatabase;
 import com.campus02.todolist.model.tasks.Task;
+import com.campus02.todolist.model.tasks.TaskManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
@@ -33,6 +34,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
   RadioButton rbPublic;
 
   Task task;
+  TaskManager taskManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +60,10 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       btnDelete.setEnabled(false);
     }
 
-    AppDatabase db = AppDatabase.getInstance(this, getCurrentUserId());
+    taskManager = new TaskManager(AppDatabase.getInstance(this, getCurrentUserId()));
 
     if (taskAlreadyExists) {
-      task = db.taskDao().getById(taskId);
+      task = taskManager.getDao().getById(taskId);
       if (task != null) {
         populateFormFromTask(task);
         enableForm();
@@ -86,7 +88,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
 
       if (taskAlreadyExists) {
         task.setLastModifiedTimestamp(System.currentTimeMillis());
-        db.taskDao().update(task);
+        taskManager.getDao().update(task);
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich aktualisiert.", Toast.LENGTH_SHORT).show();
         finish();
       }
@@ -94,7 +96,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
         task.setId(UUID.randomUUID());
         task.setOriginatorUserId(getCurrentUserId());
         task.setLastModifiedTimestamp(System.currentTimeMillis());
-        db.taskDao().insert(task);
+        taskManager.getDao().insert(task);
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich erstellt.", Toast.LENGTH_SHORT).show();
         enableForm();
         cleanForm();
@@ -110,7 +112,7 @@ public class AddOrEditTaskActivity extends AppCompatActivity {
       alert.setTitle("Aufgabe löschen");
       alert.setMessage("Soll die Aufgabe wirklich gelöscht werden?");
       alert.setPositiveButton("Ja", (dialog, which) -> {
-        db.taskDao().markDeleted(task.getId());
+        taskManager.getDao().markDeleted(task.getId());
         Toast.makeText(AddOrEditTaskActivity.this, "Aufgabe wurde erfolgreich gelöscht", Toast.LENGTH_SHORT).show();
         finish();
         });
