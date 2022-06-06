@@ -83,18 +83,18 @@ public class TaskManager {
         }
 
         for (Task localTask : localDbTaskList) {
-            if (localTask.isDeleted()) {
-                syncRequest.addToDelete(localTask.getId()); // lokalen Eintrag und am Server löschen
-            }
-            else if (fetchResponse.stream().noneMatch(fti -> fti.id.equals(localTask.getId()))) {
+            if (fetchResponse.stream().noneMatch(fti -> fti.id.equals(localTask.getId()))) {
                 // Case 3a --> lokalen Eintrag und am Server löschen
-                if (localTask.isSynced()) {
+                if (localTask.isSynced() || localTask.isDeleted()) {
                     deleteLocal.add(localTask.getId());
                 }
                 // Case 3b --> server eintrag erstellen (wurde offline erzeugt)
                 else {
                     syncRequest.addToPersist(TaskDto.from(localTask));
                 }
+            }
+            else if (localTask.isDeleted()) {
+                syncRequest.addToDelete(localTask.getId()); // lokalen Eintrag und am Server löschen
             }
         }
         if (collisionUuids.isEmpty()) {
